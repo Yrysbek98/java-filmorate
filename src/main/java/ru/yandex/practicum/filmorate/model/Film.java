@@ -3,8 +3,7 @@ package ru.yandex.practicum.filmorate.model;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
+import ru.yandex.practicum.filmorate.service.ReleaseDateConstraint;
 
 import java.time.LocalDate;
 
@@ -15,13 +14,13 @@ import java.time.LocalDate;
 @AllArgsConstructor
 public class Film {
     private int id;
-    @NotBlank
+    @NotBlank(message = "Название не может быть пустым")
     private String name;
-    @Size(max=200)
+    @Size(max = 200, message = "Максимальная длина описания — 200 символов")
     private String description;
-    @PastOrPresent
+    @ReleaseDateConstraint
     private LocalDate releaseDate;
-    @Positive
+    @Positive(message = "Продолжительность фильма должна быть положительным числом.")
     private long duration;
 
 }
