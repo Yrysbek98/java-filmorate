@@ -8,9 +8,7 @@ import ru.yandex.practicum.filmorate.service.ReleaseDateConstraint;
 
 import java.time.LocalDate;
 
-/**
- * Film.
- */
+
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
@@ -25,5 +23,5 @@ public class Film {
     @Positive(message = "Продолжительность фильма должна быть положительным числом.")
     private long duration;
 
-
 }
+

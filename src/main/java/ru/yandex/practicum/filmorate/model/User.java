@@ -34,4 +34,5 @@ public class User {
     public String getDisplayName() {
         return (name == null || name.isBlank()) ? login : name;
     }
+
 }

@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.service.UserNotFoundException;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -17,6 +18,7 @@ import java.util.Map;
 @RequestMapping("/user")
 public class UserController {
     private final Map<Integer, User> users = new HashMap<>();
+
 
     @GetMapping
     public Collection<User> findAll() {
@@ -34,7 +36,10 @@ public class UserController {
     }
 
     @PutMapping
-    public ResponseEntity<String> change(@Valid @RequestBody User user) {
+    public ResponseEntity<String> change(@Valid @RequestBody User user) throws UserNotFoundException {
+        if (!users.containsKey(user.getId())) {
+            throw new UserNotFoundException("Пользователь с таким ID не найден");
+        }
         log.info("Change user={}", user);
         users.put(user.getId(), user);
         String displayName = user.getDisplayName();

@@ -4,6 +4,7 @@ import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.service.FilmNotFoundException;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -31,6 +32,9 @@ public class FilmController {
 
     @PutMapping
     public Film change(@Valid @RequestBody Film film) {
+        if (!films.containsKey(film.getId())) {
+            throw new FilmNotFoundException("Фильм с таким ID не найден");
+        }
         log.info("Change film={}", film);
         films.put(film.getId(), film);
         return film;
