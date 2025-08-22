@@ -8,20 +8,22 @@ import jakarta.validation.constraints.Past;
 import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.lang.Nullable;
 
 
 import java.time.LocalDate;
 
-@Data
+@NoArgsConstructor
 @AllArgsConstructor
+@Data
 public class User {
     private int id;
     @Email(message = "Некорректный email")
     @NotBlank(message = "Email обязателен")
     private String email;
     @NotBlank(message = "Логин обязателен")
-    @Pattern(regexp = "^[^\\s]+$", message = "Логин не должен содержать пробелов")
+    @Pattern(regexp = "^\\S+$", message = "Логин не должен содержать пробелов")
     private String login;
     @Nullable
     private String name;
