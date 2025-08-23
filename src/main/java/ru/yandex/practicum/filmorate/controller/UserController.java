@@ -27,23 +27,25 @@ public class UserController {
     }
 
     @PostMapping
-    public ResponseEntity<String> create(@Valid @RequestBody User user) {
+    public User create(@Valid @RequestBody User user) {
         log.info("Create a new user={}", user);
         user.setId(getNextId());
         users.put(user.getId(), user);
         String displayName = user.getDisplayName();
-        return ResponseEntity.ok("Пользователь добавлен: " + displayName);
+        ResponseEntity.ok("Пользователь добавлен: " + displayName);
+        return user;
     }
 
     @PutMapping
-    public ResponseEntity<String> change(@Valid @RequestBody User user) throws UserNotFoundException {
+    public User change(@Valid @RequestBody User user) throws UserNotFoundException {
         if (!users.containsKey(user.getId())) {
             throw new UserNotFoundException("Пользователь с таким ID не найден");
         }
         log.info("Change user={}", user);
         users.put(user.getId(), user);
         String displayName = user.getDisplayName();
-        return ResponseEntity.ok("Пользователь изменен: " + displayName);
+        ResponseEntity.ok("Пользователь изменен: " + displayName);
+        return user;
     }
 
     private int getNextId() {
