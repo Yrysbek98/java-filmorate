@@ -2,7 +2,6 @@ package ru.yandex.practicum.filmorate.controller;
 
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import ru.yandex.practicum.filmorate.model.User;
@@ -34,8 +33,6 @@ public class UserController {
         }
         user.setId(getNextId());
         users.put(user.getId(), user);
-        String displayName = user.getDisplayName();
-        ResponseEntity.ok("Пользователь добавлен: " + displayName);
         return user;
     }
 
@@ -49,8 +46,6 @@ public class UserController {
         }
         log.info("Change user={}", user);
         users.put(user.getId(), user);
-        String displayName = user.getDisplayName();
-        ResponseEntity.ok("Пользователь изменен: " + displayName);
         return user;
     }
 

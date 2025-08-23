@@ -1,7 +1,7 @@
 package ru.yandex.practicum.filmorate.model;
 
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Past;
@@ -29,10 +29,5 @@ public class User {
     private String name;
     @Past(message = "Дата рождения должна быть в прошлом")
     private LocalDate birthday;
-
-    @JsonIgnore
-    public String getDisplayName() {
-        return (name == null || name.isBlank()) ? login : name;
-    }
 
 }
