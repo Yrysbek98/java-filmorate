@@ -29,6 +29,9 @@ public class UserController {
     @PostMapping
     public User create(@Valid @RequestBody User user) {
         log.info("Create a new user={}", user);
+        if (user.getName() == null || user.getName().isBlank()) {
+            user.setName(user.getLogin());
+        }
         user.setId(getNextId());
         users.put(user.getId(), user);
         String displayName = user.getDisplayName();
@@ -40,6 +43,9 @@ public class UserController {
     public User change(@Valid @RequestBody User user) throws UserNotFoundException {
         if (!users.containsKey(user.getId())) {
             throw new UserNotFoundException("Пользователь с таким ID не найден");
+        }
+        if (user.getName() == null || user.getName().isBlank()) {
+            user.setName(user.getLogin());
         }
         log.info("Change user={}", user);
         users.put(user.getId(), user);
