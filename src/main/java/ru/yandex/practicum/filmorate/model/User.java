@@ -2,10 +2,7 @@ package ru.yandex.practicum.filmorate.model;
 
 
 
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Past;
-import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -27,7 +24,7 @@ public class User {
     private String login;
     @Nullable
     private String name;
-    @Past(message = "Дата рождения должна быть в прошлом")
+    @PastOrPresent(message = "Дата рождения не может быть в будущем")
     private LocalDate birthday;
 
 }
