@@ -24,7 +24,7 @@ public class FilmController {
 
     @PostMapping
     public Film create(@Valid @RequestBody Film film) {
-        log.info("Create film={}", film);
+        log.info("Create film: id={}, name={}", film.getId(), film.getName());
         film.setId(getNextId());
         films.put(film.getId(), film);
         return film;
@@ -35,7 +35,7 @@ public class FilmController {
         if (!films.containsKey(film.getId())) {
             throw new FilmNotFoundException("Фильм с таким ID не найден");
         }
-        log.info("Change film={}", film);
+        log.info("Change film: id={}, name={}", film.getId(), film.getName());
         films.put(film.getId(), film);
         return film;
     }

@@ -27,7 +27,7 @@ public class UserController {
 
     @PostMapping
     public User create(@Valid @RequestBody User user) {
-        log.info("Create a new user={}", user);
+        log.info("Create user: id={}, name={}", user.getId(), user.getName());
         if (user.getName() == null || user.getName().isBlank()) {
             user.setName(user.getLogin());
         }
@@ -44,7 +44,7 @@ public class UserController {
         if (user.getName() == null || user.getName().isBlank()) {
             user.setName(user.getLogin());
         }
-        log.info("Change user={}", user);
+        log.info("Change user: id={}, name={}", user.getId(), user.getName());
         users.put(user.getId(), user);
         return user;
     }
