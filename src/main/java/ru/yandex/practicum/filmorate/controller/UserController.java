@@ -1,60 +1,38 @@
 package ru.yandex.practicum.filmorate.controller;
 
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.service.UserNotFoundException;
+import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
 
 
 @Slf4j
 @RestController
 @RequestMapping("/users")
+@RequiredArgsConstructor
 public class UserController {
-    private final Map<Integer, User> users = new HashMap<>();
 
+    private final UserStorage userStorage;
 
     @GetMapping
     public Collection<User> findAll() {
-        log.info("Get all users");
-        return users.values();
+        return userStorage.findAll();
     }
 
     @PostMapping
     public User create(@Valid @RequestBody User user) {
-        log.info("Create user: id={}, name={}", user.getId(), user.getName());
-        if (user.getName() == null || user.getName().isBlank()) {
-            user.setName(user.getLogin());
-        }
-        user.setId(getNextId());
-        users.put(user.getId(), user);
-        return user;
+        return userStorage.create(user);
     }
 
     @PutMapping
-    public User change(@Valid @RequestBody User user) throws UserNotFoundException {
-        if (!users.containsKey(user.getId())) {
-            throw new UserNotFoundException("Пользователь с таким ID не найден");
-        }
-        if (user.getName() == null || user.getName().isBlank()) {
-            user.setName(user.getLogin());
-        }
-        log.info("Change user: id={}, name={}", user.getId(), user.getName());
-        users.put(user.getId(), user);
-        return user;
+    public User change(@Valid @RequestBody User user) {
+        return userStorage.change(user);
     }
 
-    private int getNextId() {
-        int currentMaxId = users.keySet()
-                .stream()
-                .mapToInt(id -> id)
-                .max()
-                .orElse(0);
-        return ++currentMaxId;
-    }
+
 }
