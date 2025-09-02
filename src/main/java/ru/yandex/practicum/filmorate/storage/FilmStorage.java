@@ -17,5 +17,5 @@ public interface FilmStorage {
 
      void deleteLike(int id);
 
-    Collection<Film> getTopFilms();
+    Collection<Film> getTopFilms(int count);
 }

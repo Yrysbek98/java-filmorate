@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
 
 import java.util.Collection;
@@ -31,4 +32,16 @@ public class FilmController {
         return filmStorage.change(film);
     }
 
+    @PutMapping("/like")
+    public void addLike(@Valid @RequestBody int id) {
+        if (checkUniqueFilm(id)){
+            filmStorage.addLike(id);
+        }
+
+    }
+
+
+    private boolean checkUniqueFilm(int id){
+        return true;
+    }
 }
