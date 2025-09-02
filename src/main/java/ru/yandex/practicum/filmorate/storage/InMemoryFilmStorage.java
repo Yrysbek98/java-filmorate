@@ -11,7 +11,7 @@ import java.util.*;
 @Slf4j
 public class InMemoryFilmStorage implements FilmStorage {
     private final Map<Integer, Film> films = new HashMap<>();
-    private final Set<Integer> likes = new HashSet<>();
+   // private final Set<Integer> likes = new HashSet<>();
     @Override
     public Collection<Film> findAll() {
         log.info("Get all films");
@@ -38,12 +38,15 @@ public class InMemoryFilmStorage implements FilmStorage {
 
     @Override
     public void addLike(int id) {
-            likes.add(id);
+          //  likes.add(id);
+            Film film = films.get(id);
+
+            film.setCountOfLikes(film.getCountOfLikes() + 1);
     }
 
     @Override
     public void deleteLike(int id) {
-        likes.remove(id);
+      //  likes.remove(id);
     }
 
     @Override

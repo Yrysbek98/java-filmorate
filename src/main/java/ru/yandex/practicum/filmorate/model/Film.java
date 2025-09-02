@@ -22,6 +22,7 @@ public class Film {
     private LocalDate releaseDate;
     @Positive(message = "Продолжительность фильма должна быть положительным числом.")
     private long duration;
+    private int countOfLikes = 0;
 
 }
 
