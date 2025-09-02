@@ -11,5 +11,11 @@ public interface FilmStorage {
 
     Film create(Film film);
 
-    public Film change(Film film);
+     Film change(Film film);
+
+     void addLike(int id);
+
+     void deleteLike(int id);
+
+    Collection<Film> getTopFilms();
 }

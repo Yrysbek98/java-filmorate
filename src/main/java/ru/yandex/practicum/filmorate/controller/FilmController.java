@@ -28,7 +28,7 @@ public class FilmController {
 
     @PutMapping
     public Film change(@Valid @RequestBody Film film) {
-        return change(film);
+        return filmStorage.change(film);
     }
 
 }

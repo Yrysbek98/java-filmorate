@@ -7,6 +7,7 @@ import ru.yandex.practicum.filmorate.exception.UserNotFoundException;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Component
@@ -42,6 +43,21 @@ public class InMemoryUserStorage implements UserStorage {
         log.info("Change user: id={}, name={}", user.getId(), user.getName());
         users.put(user.getId(), user);
         return user;
+    }
+
+    @Override
+    public void addFriend(int id) {
+
+    }
+
+    @Override
+    public void deleteFriend(int id) {
+
+    }
+
+    @Override
+    public Collection<User> getAllFriends() {
+        return List.of();
     }
 
     private int getNextId() {
