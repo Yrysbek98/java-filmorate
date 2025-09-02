@@ -30,6 +30,8 @@ public class User {
     @PastOrPresent(message = "Дата рождения не может быть в будущем")
     private LocalDate birthday;
     @JsonIgnore
+    private Set<Integer> friends = new HashSet<>();
+    @JsonIgnore
     private Set<Integer> likes = new HashSet<>();
 
 }
