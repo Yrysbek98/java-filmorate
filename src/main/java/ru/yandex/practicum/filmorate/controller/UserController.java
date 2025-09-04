@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.*;
 
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.UserService;
-import ru.yandex.practicum.filmorate.storage.UserStorage;
+
 
 import java.util.Collection;
 
@@ -39,7 +39,7 @@ public class UserController {
     public void addFriend(
             @PathVariable int id,
             @PathVariable int friendId
-    ){
+    ) {
         userService.addFriend(id, friendId);
     }
 
@@ -47,7 +47,7 @@ public class UserController {
     public void deleteFriend(
             @PathVariable int id,
             @PathVariable int friendId
-    ){
+    ) {
         userService.deleteFriend(id, friendId);
     }
 
@@ -55,7 +55,7 @@ public class UserController {
     public Collection<User> getSameFriends(
             @PathVariable int id,
             @PathVariable int otherId
-    ){
+    ) {
         return userService.getSameFriends(id, otherId);
     }
 

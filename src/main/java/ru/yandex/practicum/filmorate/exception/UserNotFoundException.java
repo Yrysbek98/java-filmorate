@@ -1,7 +1,9 @@
 package ru.yandex.practicum.filmorate.exception;
 
-public class UserNotFoundException extends RuntimeException {
+import org.springframework.http.HttpStatus;
+
+public class UserNotFoundException extends AbstractDtoException {
     public UserNotFoundException(String message) {
-        super(message);
+        super(message, HttpStatus.NOT_FOUND);
     }
 }
