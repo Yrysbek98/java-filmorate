@@ -7,15 +7,15 @@ import java.util.Collection;
 
 public interface FilmStorage {
 
-    Collection<Film> findAll();
+    Collection<Film> findAllFilms();
 
-    Film create(Film film);
+    Film createFilm(Film film);
 
-     Film change(Film film);
+     Film changeFilm(Film film);
 
-     void addLike(int id);
+     void addLike(int id, int userId);
 
-     void deleteLike(int id);
+     void deleteLike(int id, int userId);
 
     Collection<Film> getTopFilms(int count);
 }

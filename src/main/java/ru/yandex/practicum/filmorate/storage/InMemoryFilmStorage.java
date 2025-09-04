@@ -6,6 +6,7 @@ import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.exception.FilmNotFoundException;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Component
 @Slf4j
@@ -13,13 +14,13 @@ public class InMemoryFilmStorage implements FilmStorage {
     private final Map<Integer, Film> films = new HashMap<>();
    // private final Set<Integer> likes = new HashSet<>();
     @Override
-    public Collection<Film> findAll() {
+    public Collection<Film> findAllFilms() {
         log.info("Get all films");
         return films.values();
     }
 
     @Override
-    public Film create(Film film) {
+    public Film createFilm(Film film) {
         log.info("Create film: id={}, name={}", film.getId(), film.getName());
         film.setId(getNextId());
         films.put(film.getId(), film);
@@ -27,7 +28,7 @@ public class InMemoryFilmStorage implements FilmStorage {
     }
 
     @Override
-    public Film change(Film film) {
+    public Film changeFilm(Film film) {
         if (!films.containsKey(film.getId())) {
             throw new FilmNotFoundException("Фильм с таким ID не найден");
         }
@@ -37,21 +38,27 @@ public class InMemoryFilmStorage implements FilmStorage {
     }
 
     @Override
-    public void addLike(int id) {
-            Film film = films.get(id);
-            film.setCountOfLikes(film.getCountOfLikes() + 1);
+    public void addLike(int id, int userId) {
+        Film film = films.get(id);
+        Set<Integer> likes = film.getLikes();
+        likes.add(userId);
+        film.setLikes(likes);
     }
 
     @Override
-    public void deleteLike(int id) {
+    public void deleteLike(int id, int userId) {
         Film film = films.get(id);
-        film.setCountOfLikes(film.getCountOfLikes() - 1);
+        Set<Integer> likes = film.getLikes();
+        likes.remove(userId);
+        film.setLikes(likes);
     }
 
     @Override
     public Collection<Film> getTopFilms(int count) {
-
-        return List.of();
+        return films.values().stream()
+                .sorted(Comparator.comparingInt(f -> -f.getLikes().size()))
+                .limit(count)
+                .collect(Collectors.toList());
     }
 
     private int getNextId() {

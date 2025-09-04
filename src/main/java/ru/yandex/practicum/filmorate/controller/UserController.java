@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.service.UserService;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import java.util.Collection;
@@ -16,23 +17,46 @@ import java.util.Collection;
 @RequestMapping("/users")
 @RequiredArgsConstructor
 public class UserController {
+    private final UserService userService;
 
-    private final UserStorage userStorage;
 
     @GetMapping
     public Collection<User> findAll() {
-        return userStorage.findAll();
+        return userService.findAll();
     }
 
     @PostMapping
-    public User create(@Valid @RequestBody User user) {
-        return userStorage.create(user);
+    public User createUser(@Valid @RequestBody User user) {
+        return userService.createUser(user);
     }
 
     @PutMapping
-    public User change(@Valid @RequestBody User user) {
-        return userStorage.change(user);
+    public User changeUser(@Valid @RequestBody User user) {
+        return userService.changeUser(user);
     }
 
+    @PutMapping("/{id}/friends/{friendId}")
+    public void addFriend(
+            @PathVariable int id,
+            @PathVariable int friendId
+    ){
+        userService.addFriend(id, friendId);
+    }
+
+    @DeleteMapping("/{id}/friends/{friendId}")
+    public void deleteFriend(
+            @PathVariable int id,
+            @PathVariable int friendId
+    ){
+        userService.deleteFriend(id, friendId);
+    }
+
+    @GetMapping("{id}/friends/common/{otherId}")
+    public Collection<User> getSameFriends(
+            @PathVariable int id,
+            @PathVariable int otherId
+    ){
+        return userService.getSameFriends(id, otherId);
+    }
 
 }

@@ -31,7 +31,6 @@ public class User {
     private LocalDate birthday;
     @JsonIgnore
     private Set<Integer> friends = new HashSet<>();
-    @JsonIgnore
-    private Set<Integer> likes = new HashSet<>();
+
 
 }

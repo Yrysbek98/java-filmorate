@@ -26,9 +26,7 @@ public class Film {
     @Positive(message = "Продолжительность фильма должна быть положительным числом.")
     private long duration;
     @JsonIgnore
-    private Set<Integer> friends = new HashSet<>();
-    @JsonIgnore
-    private int countOfLikes = 0;
+    private Set<Integer> likes = new HashSet<>();
 
 }
 

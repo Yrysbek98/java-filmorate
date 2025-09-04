@@ -19,7 +19,7 @@ public class InMemoryUserStorage implements UserStorage {
     }
 
     @Override
-    public User create(User user) {
+    public User createUser(User user) {
         log.info("Create user: id={}, name={}", user.getId(), user.getName());
         if (user.getName() == null || user.getName().isBlank()) {
             user.setName(user.getLogin());
@@ -30,7 +30,7 @@ public class InMemoryUserStorage implements UserStorage {
     }
 
     @Override
-    public User change(User user) {
+    public User changeUser(User user) {
         if (!users.containsKey(user.getId())) {
             throw new UserNotFoundException("Пользователь с таким ID не найден");
         }
@@ -45,29 +45,49 @@ public class InMemoryUserStorage implements UserStorage {
     @Override
     public void addFriend(int idOfUser, int idOfFriend) {
         User user = users.get(idOfUser);
-        Set<Integer> friends = user.getFriends();
-        if (!friends.contains(idOfFriend)){
-        //  user.setFriends(friends.add(idOfFriend));
+        Set<Integer> userFriends = user.getFriends();
+        userFriends.add(idOfFriend);
+        user.setFriends(userFriends);
+        User friend = users.get(idOfFriend);
+        Set<Integer> friendFriends = friend.getFriends();
+        userFriends.add(idOfUser);
+        user.setFriends(friendFriends);
 
-        }
     }
 
     @Override
     public void deleteFriend(int idOfUser, int idOfFriend) {
-
+        User user = users.get(idOfUser);
+        Set<Integer> userFriends = user.getFriends();
+        userFriends.remove(idOfFriend);
+        user.setFriends(userFriends);
+        User friend = users.get(idOfFriend);
+        Set<Integer> friendFriends = friend.getFriends();
+        userFriends.remove(idOfUser);
+        user.setFriends(friendFriends);
     }
 
     @Override
-    public Collection<User> getAllFriends() {
-        return List.of();
+    public Collection<User> getSameFriends(int idOfUser, int idOfFriend) {
+        User user = users.get(idOfUser);
+        Set<Integer> userFriends = user.getFriends();
+        User friend = users.get(idOfFriend);
+        Set<Integer> friendFriends = friend.getFriends();
+        Map<Integer, User> commons = new HashMap<>();
+        for (Integer num : userFriends) {
+            if (friendFriends.contains(num)) {
+                commons.put(num, users.get(num));
+            }
+        }
+        return commons.values();
     }
 
-    @Override
+  /*  @Override
     public Set<Integer> getSetOfLikes(int id) {
         User user = users.get(id);
         return user.getLikes();
     }
-
+*/
 
     private int getNextId() {
         int currentMaxId = users.keySet()
