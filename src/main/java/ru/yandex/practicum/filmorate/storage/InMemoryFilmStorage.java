@@ -2,6 +2,7 @@ package ru.yandex.practicum.filmorate.storage;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+import ru.yandex.practicum.filmorate.exception.FilmValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.exception.FilmNotFoundException;
 
@@ -12,7 +13,7 @@ import java.util.stream.Collectors;
 @Slf4j
 public class InMemoryFilmStorage implements FilmStorage {
     private final Map<Integer, Film> films = new HashMap<>();
-   // private final Set<Integer> likes = new HashSet<>();
+
     @Override
     public Collection<Film> findAllFilms() {
         log.info("Get all films");
@@ -39,7 +40,16 @@ public class InMemoryFilmStorage implements FilmStorage {
 
     @Override
     public void addLike(int id, int userId) {
+        if (id < 1) {
+            throw new FilmValidationException("Некорректный id фильма");
+        }
+        if (userId < 1) {
+            throw new FilmValidationException("Некорректный id пользователя");
+        }
         Film film = films.get(id);
+        if (film == null) {
+            throw new FilmNotFoundException("Фильм с таким" + id + " не найден");
+        }
         Set<Integer> likes = film.getLikes();
         likes.add(userId);
         film.setLikes(likes);
@@ -47,7 +57,16 @@ public class InMemoryFilmStorage implements FilmStorage {
 
     @Override
     public void deleteLike(int id, int userId) {
+        if (id < 1) {
+            throw new FilmValidationException("Некорректный id фильма");
+        }
+        if (userId < 1) {
+            throw new FilmValidationException("Некорректный id пользователя");
+        }
         Film film = films.get(id);
+        if (film == null) {
+            throw new FilmNotFoundException("Фильм с таким" + id + " не найден");
+        }
         Set<Integer> likes = film.getLikes();
         likes.remove(userId);
         film.setLikes(likes);
@@ -55,6 +74,9 @@ public class InMemoryFilmStorage implements FilmStorage {
 
     @Override
     public Collection<Film> getTopFilms(int count) {
+        if (count <= 0) {
+            throw new FilmValidationException("Количество фильмов должно быть положительным числом");
+        }
         return films.values().stream()
                 .sorted(Comparator.comparingInt(f -> -f.getLikes().size()))
                 .limit(count)

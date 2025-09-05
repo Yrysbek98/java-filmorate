@@ -2,6 +2,7 @@ package ru.yandex.practicum.filmorate.storage;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+import ru.yandex.practicum.filmorate.exception.UserValidationException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.exception.UserNotFoundException;
 
@@ -44,11 +45,20 @@ public class InMemoryUserStorage implements UserStorage {
 
     @Override
     public void addFriend(int idOfUser, int idOfFriend) {
+        if (idOfUser == idOfFriend) {
+            throw new UserValidationException("Нельзя добавить в друзья самого себя");
+        }
         User user = users.get(idOfUser);
+        if (user == null){
+            throw new UserNotFoundException("Пользователь " + idOfUser + " не найден");
+        }
         Set<Integer> userFriends = user.getFriends();
         userFriends.add(idOfFriend);
         user.setFriends(userFriends);
         User friend = users.get(idOfFriend);
+        if (friend == null){
+            throw new UserNotFoundException("Пользователь " + idOfFriend + " не найден");
+        }
         Set<Integer> friendFriends = friend.getFriends();
         userFriends.add(idOfUser);
         user.setFriends(friendFriends);
@@ -57,11 +67,20 @@ public class InMemoryUserStorage implements UserStorage {
 
     @Override
     public void deleteFriend(int idOfUser, int idOfFriend) {
+        if (idOfUser == idOfFriend) {
+            throw new UserValidationException("Нельзя удалять самого себя из друзей");
+        }
         User user = users.get(idOfUser);
+        if (user == null){
+            throw new UserNotFoundException("Пользователь " + idOfUser + " не найден");
+        }
         Set<Integer> userFriends = user.getFriends();
         userFriends.remove(idOfFriend);
         user.setFriends(userFriends);
         User friend = users.get(idOfFriend);
+        if (friend == null){
+            throw new UserNotFoundException("Пользователь " + idOfFriend + " не найден");
+        }
         Set<Integer> friendFriends = friend.getFriends();
         userFriends.remove(idOfUser);
         user.setFriends(friendFriends);
@@ -69,9 +88,18 @@ public class InMemoryUserStorage implements UserStorage {
 
     @Override
     public Collection<User> getSameFriends(int idOfUser, int idOfFriend) {
+        if (idOfUser == idOfFriend) {
+            throw new UserValidationException("Нельзя искать общих друзей у самого себя");
+        }
         User user = users.get(idOfUser);
+        if (user == null){
+            throw new UserNotFoundException("Пользователь " + idOfUser + " не найден");
+        }
         Set<Integer> userFriends = user.getFriends();
         User friend = users.get(idOfFriend);
+        if (friend == null){
+            throw new UserNotFoundException("Пользователь " + idOfFriend + " не найден");
+        }
         Set<Integer> friendFriends = friend.getFriends();
         Map<Integer, User> commons = new HashMap<>();
         for (Integer num : userFriends) {
@@ -82,12 +110,6 @@ public class InMemoryUserStorage implements UserStorage {
         return commons.values();
     }
 
-  /*  @Override
-    public Set<Integer> getSetOfLikes(int id) {
-        User user = users.get(id);
-        return user.getLikes();
-    }
-*/
 
     private int getNextId() {
         int currentMaxId = users.keySet()

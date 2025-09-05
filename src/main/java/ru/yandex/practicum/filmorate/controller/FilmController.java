@@ -54,12 +54,24 @@ public class FilmController {
 
     @GetMapping("/popular?count={count}")
     public Collection<Film> getSameFriends(
-            @PathVariable @RequestParam(defaultValue = "10") @Min(1) int count) {
+            @PathVariable @RequestParam(defaultValue = "10") int count) {
         return filmService.getTopFilms(count);
     }
 
     @ExceptionHandler
-    public ResponseEntity<ErrorResponse> handleNotFound(AbstractDtoException exception){
+    public ResponseEntity<ErrorResponse> handleServerExceptions(AbstractDtoException exception) {
+        ErrorResponse errorResponse = exception.toResponse();
+        return new ResponseEntity<>(errorResponse, errorResponse.httpStatusCode());
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<ErrorResponse> handleNotFound(AbstractDtoException exception) {
+        ErrorResponse errorResponse = exception.toResponse();
+        return new ResponseEntity<>(errorResponse, errorResponse.httpStatusCode());
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<ErrorResponse> handleValidationException(AbstractDtoException exception) {
         ErrorResponse errorResponse = exception.toResponse();
         return new ResponseEntity<>(errorResponse, errorResponse.httpStatusCode());
     }
