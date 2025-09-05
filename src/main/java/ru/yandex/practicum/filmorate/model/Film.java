@@ -28,5 +28,7 @@ public class Film {
     @JsonIgnore
     private Set<Integer> likes = new HashSet<>();
 
+    public Film(int id, String name, String description, LocalDate releaseDate, long duration) {
+    }
 }
 
