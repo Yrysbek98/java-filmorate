@@ -64,6 +64,11 @@ public class UserController {
         return userService.getSameFriends(id, otherId);
     }
 
+    @GetMapping("/{id}/friends")
+    public Collection<User> getFriends(@PathVariable int id) {
+        return userService.getFriends(id);
+    }
+
     @ExceptionHandler(UserValidationException.class)
     public ResponseEntity<ErrorResponse> handleValidation(UserValidationException ex) {
         ErrorResponse errorResponse = ex.toResponse();

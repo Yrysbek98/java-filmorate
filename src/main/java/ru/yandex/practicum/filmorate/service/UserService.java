@@ -40,5 +40,9 @@ public class UserService {
         return userStorage.getSameFriends(idOfUser, idOfFriend);
     }
 
+    public Collection<User> getFriends(int idOfUser) {
+        return userStorage.getFriends(idOfUser);
+    }
+
 
 }

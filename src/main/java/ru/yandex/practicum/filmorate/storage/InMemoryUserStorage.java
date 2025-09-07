@@ -108,6 +108,18 @@ public class InMemoryUserStorage implements UserStorage {
         return commons.values();
     }
 
+    @Override
+    public Collection<User> getFriends(int idOfUser) {
+        User user = users.get(idOfUser);
+        if (user == null) {
+            throw new UserNotFoundException("Пользователь " + idOfUser + " не найден");
+        }
+        return user.getFriends().stream()
+                .map(users::get)
+                .filter(Objects::nonNull)
+                .toList();
+    }
+
 
     private int getNextId() {
         int currentMaxId = users.keySet()
