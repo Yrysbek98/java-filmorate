@@ -61,6 +61,7 @@ public class UserController {
     ) {
         return userService.getSameFriends(id, otherId);
     }
+
     @ExceptionHandler
     public ResponseEntity<ErrorResponse> handleServerExceptions(AbstractDtoException exception) {
         ErrorResponse errorResponse = exception.toResponse();
