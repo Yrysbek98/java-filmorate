@@ -19,7 +19,7 @@ public class FilmControllerTest {
 
     @Test
     void getFilms() {
-        Film film = new Film( "Титаник", "В первом и последнем плавании шикарного «Титаника» встречаются двое.", LocalDate.of(1997, 12, 19), 194);
+        Film film = new Film("Титаник", "В первом и последнем плавании шикарного «Титаника» встречаются двое.", LocalDate.of(1997, 12, 19), 194);
         Film film1 = new Film("Бойцовский клуб", "Терзаемый хронической бессонницей и отчаянно пытающийся вырваться из мучительно скучной жизни клерк встречает некоего Тайлера Дардена, харизматического торговца мылом с извращенной философией.", LocalDate.of(1999, 10, 15), 149);
 
         filmController.createFilm(film);
@@ -32,7 +32,7 @@ public class FilmControllerTest {
 
     @Test
     void createFilm() {
-        Film film = new Film( "Древний фильм", "Фильм до рождение кино", LocalDate.of(2000, 12, 12), 60);
+        Film film = new Film("Древний фильм", "Фильм до рождение кино", LocalDate.of(2000, 12, 12), 60);
         filmController.createFilm(film);
 
         Collection<Film> films = filmController.findAllFilms();

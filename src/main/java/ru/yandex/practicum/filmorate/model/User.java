@@ -1,7 +1,6 @@
 package ru.yandex.practicum.filmorate.model;
 
 
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
@@ -33,7 +32,7 @@ public class User {
     private Set<Integer> friends = new HashSet<>();
 
 
-    public User( String email, String login, String name, LocalDate birthday) {
+    public User(String email, String login, String name, LocalDate birthday) {
         this.email = email;
         this.login = login;
         this.name = name;

@@ -19,7 +19,7 @@ public class UserControllerTest {
     @Test
     void getUsers() {
         User user1 = new User("resbek@gmail.com", "resbek", "Yrysbek", LocalDate.of(2000, 12, 5));
-        User user2 = new User( "resbek98@gmail.com", "Yrysbek", "resbek", LocalDate.of(1998, 12, 5));
+        User user2 = new User("resbek98@gmail.com", "Yrysbek", "resbek", LocalDate.of(1998, 12, 5));
 
         userController.createUser(user1);
         userController.createUser(user2);
@@ -30,7 +30,7 @@ public class UserControllerTest {
 
     @Test
     void createUser() {
-        User user1 = new User( "resbek@gmail.com", "resbek", "Yrysbek", LocalDate.of(2000, 12, 5));
+        User user1 = new User("resbek@gmail.com", "resbek", "Yrysbek", LocalDate.of(2000, 12, 5));
 
         userController.createUser(user1);
 
