@@ -19,4 +19,6 @@ public interface UserStorage {
     Collection<User> getSameFriends(int idOfUser, int idOfFriend);
 
     Collection<User> getFriends(int idOfUser);
+
+    boolean checkUser(int id);
 }

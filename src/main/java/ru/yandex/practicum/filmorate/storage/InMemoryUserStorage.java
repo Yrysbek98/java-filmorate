@@ -120,6 +120,7 @@ public class InMemoryUserStorage implements UserStorage {
                 .toList();
     }
 
+    @Override
     public boolean checkUser(int id) {
         return users.containsKey(id);
     }
