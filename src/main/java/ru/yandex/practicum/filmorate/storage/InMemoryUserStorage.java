@@ -120,6 +120,9 @@ public class InMemoryUserStorage implements UserStorage {
                 .toList();
     }
 
+    public boolean checkUser(int id){
+        return users.containsKey(id);
+    }
 
     private int getNextId() {
         int currentMaxId = users.keySet()

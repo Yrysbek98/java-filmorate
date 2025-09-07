@@ -13,10 +13,9 @@ public class FilmService {
 
     private final FilmStorage filmStorage;
 
-    private UserStorage userStorage;
 
     @Autowired
-    public FilmService(FilmStorage filmStorage) {
+    public FilmService(FilmStorage filmStorage, UserStorage userStorage) {
         this.filmStorage = filmStorage;
     }
 

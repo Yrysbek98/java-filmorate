@@ -3,6 +3,7 @@ package ru.yandex.practicum.filmorate.storage;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exception.FilmValidationException;
+import ru.yandex.practicum.filmorate.exception.UserNotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.exception.FilmNotFoundException;
 
@@ -13,6 +14,7 @@ import java.util.stream.Collectors;
 @Slf4j
 public class InMemoryFilmStorage implements FilmStorage {
     private final Map<Integer, Film> films = new HashMap<>();
+    private final InMemoryUserStorage userStorage = new InMemoryUserStorage();
 
     @Override
     public Collection<Film> findAllFilms() {
@@ -50,6 +52,9 @@ public class InMemoryFilmStorage implements FilmStorage {
         if (film == null) {
             throw new FilmNotFoundException("Фильм с таким" + id + " не найден");
         }
+        if (!userStorage.checkUser(userId)) {
+            throw new UserNotFoundException("Пользователь с таким" + userId + " не найден");
+        }
         Set<Integer> likes = film.getLikes();
         likes.add(userId);
         film.setLikes(likes);
@@ -67,6 +72,9 @@ public class InMemoryFilmStorage implements FilmStorage {
         Film film = films.get(id);
         if (film == null) {
             throw new FilmNotFoundException("Фильм с таким" + id + " не найден");
+        }
+        if (!userStorage.checkUser(userId)) {
+            throw new UserNotFoundException("Пользователь с таким" + userId + " не найден");
         }
         Set<Integer> likes = film.getLikes();
         likes.remove(userId);
