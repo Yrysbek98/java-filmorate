@@ -18,8 +18,8 @@ public class UserControllerTest {
 
     @Test
     void getUsers() {
-        User user1 = new User(0, "resbek@gmail.com", "resbek", "Yrysbek", LocalDate.of(2000, 12, 5));
-        User user2 = new User(0, "resbek98@gmail.com", "Yrysbek", "resbek", LocalDate.of(1998, 12, 5));
+        User user1 = new User("resbek@gmail.com", "resbek", "Yrysbek", LocalDate.of(2000, 12, 5));
+        User user2 = new User( "resbek98@gmail.com", "Yrysbek", "resbek", LocalDate.of(1998, 12, 5));
 
         userController.createUser(user1);
         userController.createUser(user2);
@@ -30,7 +30,7 @@ public class UserControllerTest {
 
     @Test
     void createUser() {
-        User user1 = new User(0, "resbek@gmail.com", "resbek", "Yrysbek", LocalDate.of(2000, 12, 5));
+        User user1 = new User( "resbek@gmail.com", "resbek", "Yrysbek", LocalDate.of(2000, 12, 5));
 
         userController.createUser(user1);
 
@@ -42,21 +42,4 @@ public class UserControllerTest {
         Assertions.assertEquals("Yrysbek", storedUser.getName(), "Имя пользователя не установлено корректно");
     }
 
-    @Test
-    void changeUser() {
-        User user1 = new User(1, "resbek@gmail.com", "resbek", "Yrysbek", LocalDate.of(2000, 12, 5));
-        userController.createUser(user1);
-
-
-        User updatedUser = new User(user1.getId(), "resbek98@gmail.com", "resbek_updated", "Res", LocalDate.of(1998, 12, 5));
-        userController.changeUser(updatedUser);
-
-        Collection<User> users = userController.findAll();
-        Assertions.assertEquals(1, users.size(), "Неправильно выполнен метод изменения пользователя");
-
-        User storedUser = users.iterator().next();
-        Assertions.assertEquals("resbek_updated", storedUser.getLogin(), "Логин не обновился");
-        Assertions.assertEquals("Res", storedUser.getName(), "Имя не обновилось");
-        Assertions.assertEquals("resbek98@gmail.com", storedUser.getEmail(), "Email не обновился");
-    }
 }

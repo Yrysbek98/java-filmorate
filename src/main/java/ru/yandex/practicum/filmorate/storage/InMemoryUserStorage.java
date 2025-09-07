@@ -48,20 +48,20 @@ public class InMemoryUserStorage implements UserStorage {
         if (idOfUser == idOfFriend) {
             throw new UserValidationException("Нельзя добавить в друзья самого себя");
         }
+
         User user = users.get(idOfUser);
-        if (user == null){
+        if (user == null) {
             throw new UserNotFoundException("Пользователь " + idOfUser + " не найден");
         }
-        Set<Integer> userFriends = user.getFriends();
-        userFriends.add(idOfFriend);
-        user.setFriends(userFriends);
+
         User friend = users.get(idOfFriend);
-        if (friend == null){
+        if (friend == null) {
             throw new UserNotFoundException("Пользователь " + idOfFriend + " не найден");
         }
-        Set<Integer> friendFriends = friend.getFriends();
-        userFriends.add(idOfUser);
-        user.setFriends(friendFriends);
+
+        user.getFriends().add(idOfFriend);
+
+        friend.getFriends().add(idOfUser);
 
     }
 
@@ -70,20 +70,18 @@ public class InMemoryUserStorage implements UserStorage {
         if (idOfUser == idOfFriend) {
             throw new UserValidationException("Нельзя удалять самого себя из друзей");
         }
+
         User user = users.get(idOfUser);
-        if (user == null){
+        if (user == null) {
             throw new UserNotFoundException("Пользователь " + idOfUser + " не найден");
         }
-        Set<Integer> userFriends = user.getFriends();
-        userFriends.remove(idOfFriend);
-        user.setFriends(userFriends);
+
         User friend = users.get(idOfFriend);
-        if (friend == null){
+        if (friend == null) {
             throw new UserNotFoundException("Пользователь " + idOfFriend + " не найден");
         }
-        Set<Integer> friendFriends = friend.getFriends();
-        userFriends.remove(idOfUser);
-        user.setFriends(friendFriends);
+        user.getFriends().remove(idOfFriend);
+        friend.getFriends().remove(idOfUser);
     }
 
     @Override
@@ -92,12 +90,12 @@ public class InMemoryUserStorage implements UserStorage {
             throw new UserValidationException("Нельзя искать общих друзей у самого себя");
         }
         User user = users.get(idOfUser);
-        if (user == null){
+        if (user == null) {
             throw new UserNotFoundException("Пользователь " + idOfUser + " не найден");
         }
         Set<Integer> userFriends = user.getFriends();
         User friend = users.get(idOfFriend);
-        if (friend == null){
+        if (friend == null) {
             throw new UserNotFoundException("Пользователь " + idOfFriend + " не найден");
         }
         Set<Integer> friendFriends = friend.getFriends();
