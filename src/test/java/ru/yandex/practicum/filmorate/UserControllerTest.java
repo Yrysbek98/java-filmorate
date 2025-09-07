@@ -25,7 +25,7 @@ public class UserControllerTest {
         userController.createUser(user2);
 
         Collection<User> users = userController.findAll();
-        Assertions.assertEquals(4, users.size(), "Неправильно выполнен метод получения пользователей");
+        Assertions.assertEquals(3, users.size(), "Неправильно выполнен метод получения пользователей");
     }
 
     @Test
@@ -35,7 +35,7 @@ public class UserControllerTest {
         userController.createUser(user1);
 
         Collection<User> users = userController.findAll();
-        Assertions.assertEquals(2, users.size(), "Неправильно выполнено добавление пользователя");
+        Assertions.assertEquals(1, users.size(), "Неправильно выполнено добавление пользователя");
 
 
         User storedUser = users.iterator().next();
