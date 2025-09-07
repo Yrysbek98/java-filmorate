@@ -39,7 +39,7 @@ public class InMemoryFilmStorage implements FilmStorage {
     }
 
     @Override
-    public void addLike(int id, int userId) {
+    public Film addLike(int id, int userId) {
         if (id < 1) {
             throw new FilmValidationException("Некорректный id фильма");
         }
@@ -53,10 +53,11 @@ public class InMemoryFilmStorage implements FilmStorage {
         Set<Integer> likes = film.getLikes();
         likes.add(userId);
         film.setLikes(likes);
+        return film;
     }
 
     @Override
-    public void deleteLike(int id, int userId) {
+    public Film deleteLike(int id, int userId) {
         if (id < 1) {
             throw new FilmValidationException("Некорректный id фильма");
         }
@@ -70,6 +71,7 @@ public class InMemoryFilmStorage implements FilmStorage {
         Set<Integer> likes = film.getLikes();
         likes.remove(userId);
         film.setLikes(likes);
+        return film;
     }
 
     @Override

@@ -32,12 +32,12 @@ public class FilmService {
         return filmStorage.changeFilm(film);
     }
 
-    public void addLike(int id, int userId) {
-        filmStorage.addLike(id, userId);
+    public Film addLike(int id, int userId) {
+        return filmStorage.addLike(id, userId);
     }
 
-    public void deleteLike(int id, int userId) {
-        filmStorage.deleteLike(id, userId);
+    public Film deleteLike(int id, int userId) {
+        return filmStorage.deleteLike(id, userId);
     }
 
     public Collection<Film> getTopFilms(int count) {
