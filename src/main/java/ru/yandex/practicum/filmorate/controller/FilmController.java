@@ -6,7 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.dto.ErrorResponse;
-import ru.yandex.practicum.filmorate.exception.AbstractDtoException;
+import ru.yandex.practicum.filmorate.exception.*;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.FilmService;
 
@@ -63,15 +63,15 @@ public class FilmController {
         return new ResponseEntity<>(errorResponse, errorResponse.httpStatusCode());
     }
 
-    @ExceptionHandler
-    public ResponseEntity<ErrorResponse> handleNotFound(AbstractDtoException exception) {
-        ErrorResponse errorResponse = exception.toResponse();
+    @ExceptionHandler(FilmValidationException.class)
+    public ResponseEntity<ErrorResponse> handleValidation(FilmValidationException ex) {
+        ErrorResponse errorResponse = ex.toResponse();
         return new ResponseEntity<>(errorResponse, errorResponse.httpStatusCode());
     }
 
-    @ExceptionHandler
-    public ResponseEntity<ErrorResponse> handleValidationException(AbstractDtoException exception) {
-        ErrorResponse errorResponse = exception.toResponse();
+    @ExceptionHandler(FilmNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleNotFound(FilmNotFoundException ex) {
+        ErrorResponse errorResponse = ex.toResponse();
         return new ResponseEntity<>(errorResponse, errorResponse.httpStatusCode());
     }
 }
