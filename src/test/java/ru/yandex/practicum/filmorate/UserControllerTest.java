@@ -1,11 +1,13 @@
 package ru.yandex.practicum.filmorate;
 
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import ru.yandex.practicum.filmorate.controller.UserController;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.storage.InMemoryUserStorage;
 
 import java.time.LocalDate;
 import java.util.Collection;
@@ -16,6 +18,14 @@ public class UserControllerTest {
     @Autowired
     private UserController userController;
 
+    @Autowired
+    private InMemoryUserStorage userStorage;
+
+    @BeforeEach
+    void cleanUp() {
+        userStorage.clear();
+    }
+
     @Test
     void getUsers() {
         User user1 = new User("resbek@gmail.com", "resbek", "Yrysbek", LocalDate.of(2000, 12, 5));
@@ -25,7 +35,7 @@ public class UserControllerTest {
         userController.createUser(user2);
 
         Collection<User> users = userController.findAll();
-        Assertions.assertEquals(3, users.size(), "Неправильно выполнен метод получения пользователей");
+        Assertions.assertEquals(2, users.size(), "Неправильно выполнен метод получения пользователей");
     }
 
     @Test

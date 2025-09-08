@@ -48,7 +48,7 @@ public class InMemoryFilmStorage implements FilmStorage {
         }
         Film film = films.get(id);
         if (film == null) {
-            throw new FilmNotFoundException("Фильм с таким" + id + " не найден");
+            throw new FilmNotFoundException("Фильм с таким " + id + " не найден");
         }
         Set<Integer> likes = film.getLikes();
         likes.add(userId);
@@ -66,7 +66,7 @@ public class InMemoryFilmStorage implements FilmStorage {
         }
         Film film = films.get(id);
         if (film == null) {
-            throw new FilmNotFoundException("Фильм с таким" + id + " не найден");
+            throw new FilmNotFoundException("Фильм с таким " + id + " не найден");
         }
         Set<Integer> likes = film.getLikes();
         likes.remove(userId);
@@ -75,7 +75,7 @@ public class InMemoryFilmStorage implements FilmStorage {
     }
 
     @Override
-    public Collection<Film> getTopFilms(int count) {
+    public Collection<Film> getPopularFilms(int count) {
         if (count <= 0) {
             throw new FilmValidationException("Количество фильмов должно быть положительным числом");
         }
@@ -83,6 +83,10 @@ public class InMemoryFilmStorage implements FilmStorage {
                 .sorted(Comparator.comparingInt(f -> -f.getLikes().size()))
                 .limit(count)
                 .collect(Collectors.toList());
+    }
+
+    public void clear() {
+        films.clear();
     }
 
     private int getNextId() {

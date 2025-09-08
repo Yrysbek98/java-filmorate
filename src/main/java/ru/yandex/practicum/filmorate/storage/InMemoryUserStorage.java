@@ -46,21 +46,13 @@ public class InMemoryUserStorage implements UserStorage {
     @Override
     public void addFriend(int idOfUser, int idOfFriend) {
         if (idOfUser == idOfFriend) {
-            throw new UserValidationException("Нельзя добавить в друзья самого себя");
+            throw new UserValidationException("Нельзя добавлять в друзья самого себя");
         }
 
-        User user = users.get(idOfUser);
-        if (user == null) {
-            throw new UserNotFoundException("Пользователь " + idOfUser + " не найден");
-        }
-
-        User friend = users.get(idOfFriend);
-        if (friend == null) {
-            throw new UserNotFoundException("Пользователь " + idOfFriend + " не найден");
-        }
+        User user = getUserOrThrow(idOfUser);
+        User friend = getUserOrThrow(idOfFriend);
 
         user.getFriends().add(idOfFriend);
-
         friend.getFriends().add(idOfUser);
 
     }
@@ -68,20 +60,15 @@ public class InMemoryUserStorage implements UserStorage {
     @Override
     public void deleteFriend(int idOfUser, int idOfFriend) {
         if (idOfUser == idOfFriend) {
-            throw new UserValidationException("Нельзя удалять самого себя из друзей");
+            throw new UserValidationException("Нельзя удалять самого себя из списка друзей");
         }
 
-        User user = users.get(idOfUser);
-        if (user == null) {
-            throw new UserNotFoundException("Пользователь " + idOfUser + " не найден");
-        }
+        User user = getUserOrThrow(idOfUser);
+        User friend = getUserOrThrow(idOfFriend);
 
-        User friend = users.get(idOfFriend);
-        if (friend == null) {
-            throw new UserNotFoundException("Пользователь " + idOfFriend + " не найден");
-        }
         user.getFriends().remove(idOfFriend);
         friend.getFriends().remove(idOfUser);
+
     }
 
     @Override
@@ -89,16 +76,13 @@ public class InMemoryUserStorage implements UserStorage {
         if (idOfUser == idOfFriend) {
             throw new UserValidationException("Нельзя искать общих друзей у самого себя");
         }
-        User user = users.get(idOfUser);
-        if (user == null) {
-            throw new UserNotFoundException("Пользователь " + idOfUser + " не найден");
-        }
+
+        User user = getUserOrThrow(idOfUser);
         Set<Integer> userFriends = user.getFriends();
-        User friend = users.get(idOfFriend);
-        if (friend == null) {
-            throw new UserNotFoundException("Пользователь " + idOfFriend + " не найден");
-        }
+
+        User friend = getUserOrThrow(idOfFriend);
         Set<Integer> friendFriends = friend.getFriends();
+
         Map<Integer, User> commons = new HashMap<>();
         for (Integer num : userFriends) {
             if (friendFriends.contains(num)) {
@@ -110,10 +94,7 @@ public class InMemoryUserStorage implements UserStorage {
 
     @Override
     public Collection<User> getFriends(int idOfUser) {
-        User user = users.get(idOfUser);
-        if (user == null) {
-            throw new UserNotFoundException("Пользователь " + idOfUser + " не найден");
-        }
+        User user = getUserOrThrow(idOfUser);
         return user.getFriends().stream()
                 .map(users::get)
                 .filter(Objects::nonNull)
@@ -125,6 +106,10 @@ public class InMemoryUserStorage implements UserStorage {
         return users.containsKey(id);
     }
 
+    public void clear() {
+        users.clear();
+    }
+
     private int getNextId() {
         int currentMaxId = users.keySet()
                 .stream()
@@ -132,5 +117,13 @@ public class InMemoryUserStorage implements UserStorage {
                 .max()
                 .orElse(0);
         return ++currentMaxId;
+    }
+
+    private User getUserOrThrow(int id) {
+        User user = users.get(id);
+        if (user == null) {
+            throw new UserNotFoundException("Пользователь " + id + " не найден");
+        }
+        return user;
     }
 }

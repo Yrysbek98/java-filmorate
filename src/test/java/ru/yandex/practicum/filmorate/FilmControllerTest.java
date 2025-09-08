@@ -1,11 +1,13 @@
 package ru.yandex.practicum.filmorate;
 
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import ru.yandex.practicum.filmorate.controller.FilmController;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.storage.InMemoryFilmStorage;
 
 
 import java.time.LocalDate;
@@ -17,6 +19,14 @@ public class FilmControllerTest {
     @Autowired
     private FilmController filmController;
 
+    @Autowired
+    private InMemoryFilmStorage filmStorage;
+
+    @BeforeEach
+    void cleanUp() {
+        filmStorage.clear();
+    }
+
     @Test
     void getFilms() {
         Film film = new Film("Титаник", "В первом и последнем плавании шикарного «Титаника» встречаются двое.", LocalDate.of(1997, 12, 19), 194);
@@ -27,7 +37,7 @@ public class FilmControllerTest {
 
         Collection<Film> films = filmController.findAllFilms();
         System.out.println(films);
-        Assertions.assertEquals(3, films.size(), "Неправильно выполнен метод получения фильмов");
+        Assertions.assertEquals(2, films.size(), "Неправильно выполнен метод получения фильмов");
     }
 
     @Test

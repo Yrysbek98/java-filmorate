@@ -48,8 +48,8 @@ public class FilmService {
         return filmStorage.deleteLike(id, userId);
     }
 
-    public Collection<Film> getTopFilms(int count) {
-        return filmStorage.getTopFilms(count);
+    public Collection<Film> getPopularFilms(int count) {
+        return filmStorage.getPopularFilms(count);
     }
 
 }
