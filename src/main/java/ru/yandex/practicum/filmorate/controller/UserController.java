@@ -11,7 +11,7 @@ import ru.yandex.practicum.filmorate.exception.AbstractDtoException;
 import ru.yandex.practicum.filmorate.exception.UserNotFoundException;
 import ru.yandex.practicum.filmorate.exception.UserValidationException;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.service.UserService;
+import ru.yandex.practicum.filmorate.serviceStorage.UserService;
 
 
 import java.util.Collection;

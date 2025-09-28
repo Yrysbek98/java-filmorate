@@ -1,10 +1,13 @@
 package ru.yandex.practicum.filmorate.repository;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.stereotype.Repository;
+import ru.yandex.practicum.filmorate.exception.FilmNotFoundException;
+import ru.yandex.practicum.filmorate.exception.FilmValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.MPA;
@@ -12,6 +15,7 @@ import ru.yandex.practicum.filmorate.model.MPA;
 
 import java.util.*;
 
+@Slf4j
 @Repository
 @RequiredArgsConstructor
 public class JdbcFilmRepository implements FilmRepository {
@@ -20,8 +24,59 @@ public class JdbcFilmRepository implements FilmRepository {
     private final GenreRepository genreRepository = new JdbcGenreRepository(jdbc);
 
     @Override
-    public List<Film> findAllFilms() {
+    public Optional<Film> getFilmById(int id) {
+        String query = """
+                SELECT f.film_id, f.name, f.description, f.release_date, f.duration, 
+                       m.mpa_id, m.mpa_name,
+                       g.genre_id, g.genre_name
+                FROM FILMS f 
+                JOIN MPA m ON f.mpa_id = m.mpa_id
+                LEFT JOIN FILM_GENRES fg ON f.film_id = fg.film_id
+                LEFT JOIN GENRES g ON fg.genre_id = g.genre_id
+                WHERE f.film_id = :id
+                """;
 
+        Map<String, Object> params = Map.of("id", id);
+
+        List<Film> films = jdbc.query(query, params, rs -> {
+            Map<Integer, Film> filmMap = new HashMap<>();
+
+            while (rs.next()) {
+                int filmId = rs.getInt("film_id");
+                Film film = filmMap.get(filmId);
+
+                if (film == null) {
+                    film = new Film(
+                            filmId,
+                            rs.getString("name"),
+                            rs.getString("description"),
+                            rs.getTimestamp("release_date").toLocalDateTime().toLocalDate(),
+                            rs.getInt("duration"),
+                            new MPA( rs.getString("mpa_name")),
+                            new ArrayList<>()
+                    );
+                    filmMap.put(filmId, film);
+                }
+
+
+                int genreId = rs.getInt("genre_id");
+                if (!rs.wasNull()) {
+                    Genre genre = new Genre(genreId, rs.getString("genre_name"));
+                    if (!film.getGenres().contains(genre)) {
+                        film.getGenres().add(genre);
+                    }
+                }
+            }
+
+            return new ArrayList<>(filmMap.values());
+        });
+
+        return films.isEmpty() ? Optional.empty() : Optional.of(films.get(0));
+    }
+
+    @Override
+    public List<Film> findAllFilms() {
+        log.info("Get all films");
         String filmQuery = """
                     SELECT f.film_id, f.name, f.description, f.release_date, f.duration,
                            m.mpa_id, m.mpa_name
@@ -70,7 +125,7 @@ public class JdbcFilmRepository implements FilmRepository {
 
     @Override
     public Film createFilm(Film film) {
-
+        log.info("Create film: id={}, name={}", film.getId(), film.getName());
         int mpaId = mpaRepository.findMpaIdByName(film.getMpa_id().getName());
 
 

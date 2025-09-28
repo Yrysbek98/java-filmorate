@@ -1,12 +1,11 @@
-package ru.yandex.practicum.filmorate.repository;
+package ru.yandex.practicum.filmorate.serviceDB;
 
 import ru.yandex.practicum.filmorate.model.Film;
 
 import java.util.List;
 import java.util.Optional;
 
-
-public interface FilmRepository {
+public interface FilmServiceDB {
 
     Optional<Film> getFilmById(int id);
 

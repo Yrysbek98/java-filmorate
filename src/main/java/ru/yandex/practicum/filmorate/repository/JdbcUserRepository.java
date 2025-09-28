@@ -7,15 +7,35 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.model.User;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Repository
 @RequiredArgsConstructor
 public class JdbcUserRepository implements UserRepository {
     private final NamedParameterJdbcOperations jdbc;
+
+    @Override
+    public Optional<User> getUserById(int id) {
+        String query = """
+        SELECT user_id, email, login, name, birthday
+        FROM USERS
+        WHERE user_id = :id
+        """;
+
+        Map<String, Object> params = Map.of("id", id);
+
+        List<User> users = jdbc.query(query, params, (rs, rowNum) ->
+                new User(
+                        rs.getInt("user_id"),
+                        rs.getString("email"),
+                        rs.getString("login"),
+                        rs.getString("name"),
+                        rs.getTimestamp("birthday").toLocalDateTime().toLocalDate()
+                )
+        );
+
+        return users.isEmpty() ? Optional.empty() : Optional.of(users.get(0));
+    }
 
     @Override
     public List<User> findAll() {
