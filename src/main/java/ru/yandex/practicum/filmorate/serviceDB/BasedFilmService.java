@@ -6,8 +6,7 @@ import ru.yandex.practicum.filmorate.exception.FilmNotFoundException;
 import ru.yandex.practicum.filmorate.exception.FilmValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.repository.FilmRepository;
-import ru.yandex.practicum.filmorate.repository.GenreRepository;
-import ru.yandex.practicum.filmorate.repository.MpaRepository;
+
 
 import java.util.List;
 import java.util.Optional;
@@ -16,8 +15,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class BasedFilmService implements FilmServiceDB {
     final FilmRepository filmRepository;
-    final MpaRepository mpaRepository;
-    final GenreRepository genreRepository;
+
 
     @Override
     public Optional<Film> getFilmById(int id) {
@@ -33,8 +31,7 @@ public class BasedFilmService implements FilmServiceDB {
 
     @Override
     public Film createFilm(Film film) {
-
-        return null;
+        return filmRepository.createFilm(film);
     }
 
     @Override
@@ -53,6 +50,9 @@ public class BasedFilmService implements FilmServiceDB {
         if (userId < 1) {
             throw new FilmValidationException("Некорректный id пользователя");
         }
+        final Film f = filmRepository.getFilmById(id)
+                .orElseThrow(() -> new FilmNotFoundException("Фильм с таким " + id + " не найден"));
+        filmRepository.addLike(id, userId);
     }
 
     @Override
@@ -63,10 +63,17 @@ public class BasedFilmService implements FilmServiceDB {
         if (userId < 1) {
             throw new FilmValidationException("Некорректный id пользователя");
         }
+        final Film f = filmRepository.getFilmById(id)
+                .orElseThrow(() -> new FilmNotFoundException("Фильм с таким " + id + " не найден"));
+        filmRepository.deleteLike(id, userId);
     }
 
     @Override
     public List<Film> getPopularFilms(int count) {
-        return List.of();
+        if (count <= 0) {
+            throw new FilmValidationException("Количество фильмов должно быть положительным числом");
+        }
+
+        return filmRepository.getPopularFilms(count);
     }
 }
