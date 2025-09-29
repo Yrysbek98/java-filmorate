@@ -1,6 +1,6 @@
 package ru.yandex.practicum.filmorate.repository;
 
-import lombok.RequiredArgsConstructor;
+
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
@@ -15,11 +15,18 @@ import java.util.*;
 
 @Slf4j
 @Repository
-@RequiredArgsConstructor
 public class JdbcFilmRepository implements FilmRepository {
     private final NamedParameterJdbcOperations jdbc;
-    private final MpaRepository mpaRepository = new JdbcMpaRepository(jdbc);
-    private final GenreRepository genreRepository = new JdbcGenreRepository(jdbc);
+    private final MpaRepository mpaRepository;
+    private final GenreRepository genreRepository;
+
+    public JdbcFilmRepository(NamedParameterJdbcOperations jdbc,
+                              MpaRepository mpaRepository,
+                              GenreRepository genreRepository) {
+        this.jdbc = jdbc;
+        this.mpaRepository = mpaRepository;
+        this.genreRepository = genreRepository;
+    }
 
     @Override
     public Optional<Film> getFilmById(int id) {
