@@ -7,10 +7,7 @@ import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.MPA;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Repository
 @RequiredArgsConstructor
@@ -26,7 +23,7 @@ public class JdbcMpaRepository implements MpaRepository {
     }
 
     @Override
-    public MPA getMpaById(int id) {
+    public Optional<MPA> getMpaById(int id) {
         String query = """
                 SELECT mpa_id, mpa_name
                 FROM MPA
@@ -37,11 +34,11 @@ public class JdbcMpaRepository implements MpaRepository {
         params.addValue("id", id);
 
 
-        return jdbc.queryForObject(query, params, (rs, rowNum) -> {
+        return Optional.ofNullable(jdbc.queryForObject(query, params, (rs, rowNum) -> {
             int genreId = rs.getInt("mpa_id");
             String genreName = rs.getString("mpa_name");
             return new MPA(genreId, genreName);
-        });
+        }));
     }
 
     @Override

@@ -11,10 +11,10 @@ import ru.yandex.practicum.filmorate.exception.AbstractDtoException;
 import ru.yandex.practicum.filmorate.exception.UserNotFoundException;
 import ru.yandex.practicum.filmorate.exception.UserValidationException;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.serviceStorage.UserService;
+import ru.yandex.practicum.filmorate.serviceDB.UserServiceDB;
 
 
-import java.util.Collection;
+import java.util.List;
 
 
 @Slf4j
@@ -22,22 +22,22 @@ import java.util.Collection;
 @RequestMapping("/users")
 @RequiredArgsConstructor
 public class UserController {
-    private final UserService userService;
+    private final UserServiceDB userServiceDB;
 
 
     @GetMapping
-    public Collection<User> findAll() {
-        return userService.findAll();
+    public List<User> findAll() {
+        return userServiceDB.findAll();
     }
 
     @PostMapping
     public User createUser(@Valid @RequestBody User user) {
-        return userService.createUser(user);
+        return userServiceDB.createUser(user);
     }
 
     @PutMapping
     public User changeUser(@Valid @RequestBody User user) {
-        return userService.changeUser(user);
+        return userServiceDB.changeUser(user);
     }
 
     @PutMapping("/{id}/friends/{friendId}")
@@ -45,7 +45,7 @@ public class UserController {
             @PathVariable int id,
             @PathVariable int friendId
     ) {
-        userService.addFriend(id, friendId);
+        userServiceDB.addFriend(id, friendId);
     }
 
     @DeleteMapping("/{id}/friends/{friendId}")
@@ -53,20 +53,20 @@ public class UserController {
             @PathVariable int id,
             @PathVariable int friendId
     ) {
-        userService.deleteFriend(id, friendId);
+        userServiceDB.deleteFriend(id, friendId);
     }
 
     @GetMapping("{id}/friends/common/{otherId}")
-    public Collection<User> getSameFriends(
+    public List<User> getSameFriends(
             @PathVariable int id,
             @PathVariable int otherId
     ) {
-        return userService.getSameFriends(id, otherId);
+        return userServiceDB.getSameFriends(id, otherId);
     }
 
     @GetMapping("/{id}/friends")
-    public Collection<User> getFriends(@PathVariable int id) {
-        return userService.getFriends(id);
+    public List<User> getFriends(@PathVariable int id) {
+        return userServiceDB.getFriends(id);
     }
 
     @ExceptionHandler(UserValidationException.class)

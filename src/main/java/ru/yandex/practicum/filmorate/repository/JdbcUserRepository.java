@@ -17,10 +17,10 @@ public class JdbcUserRepository implements UserRepository {
     @Override
     public Optional<User> getUserById(int id) {
         String query = """
-        SELECT user_id, email, login, name, birthday
-        FROM USERS
-        WHERE user_id = :id
-        """;
+                SELECT user_id, email, login, name, birthday
+                FROM USERS
+                WHERE user_id = :id
+                """;
 
         Map<String, Object> params = Map.of("id", id);
 

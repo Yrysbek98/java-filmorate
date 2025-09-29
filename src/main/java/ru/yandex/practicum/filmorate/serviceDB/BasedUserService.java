@@ -20,7 +20,7 @@ public class BasedUserService implements UserServiceDB {
     public Optional<User> getUserById(int id) {
         final User u = userRepository.getUserById(id)
                 .orElseThrow(() -> new UserNotFoundException("Пользователь с таким " + id + " не найден"));
-        return userRepository.getUserById(id);
+        return Optional.ofNullable(u);
     }
 
     @Override

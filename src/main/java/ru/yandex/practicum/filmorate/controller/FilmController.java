@@ -8,53 +8,53 @@ import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.dto.ErrorResponse;
 import ru.yandex.practicum.filmorate.exception.*;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.serviceStorage.FilmService;
+import ru.yandex.practicum.filmorate.serviceDB.FilmServiceDB;
 
 
-import java.util.Collection;
+import java.util.List;
 
 @Slf4j
 @RestController
 @RequestMapping("/films")
 @RequiredArgsConstructor
 public class FilmController {
-    private final FilmService filmService;
+    private final FilmServiceDB filmServiceDB;
 
     @GetMapping
-    public Collection<Film> findAllFilms() {
-        return filmService.findAllFilms();
+    public List<Film> findAllFilms() {
+        return filmServiceDB.findAllFilms();
     }
 
     @PostMapping
     public Film createFilm(@Valid @RequestBody Film film) {
-        return filmService.createFilm(film);
+        return filmServiceDB.createFilm(film);
     }
 
     @PutMapping
     public Film changeFilm(@Valid @RequestBody Film film) {
-        return filmService.changeFilm(film);
+        return filmServiceDB.changeFilm(film);
     }
 
     @PutMapping("/{id}/like/{userId}")
-    public Film addLike(
+    public void addLike(
             @PathVariable int id,
             @PathVariable int userId
     ) {
-        return filmService.addLike(id, userId);
+        filmServiceDB.addLike(id, userId);
     }
 
     @DeleteMapping("/{id}/like/{userId}")
-    public Film deleteLike(
+    public void deleteLike(
             @PathVariable int id,
             @PathVariable int userId
     ) {
-        return filmService.deleteLike(id, userId);
+        filmServiceDB.deleteLike(id, userId);
     }
 
     @GetMapping("/popular")
-    public Collection<Film> getPopularFilms(
+    public List<Film> getPopularFilms(
             @RequestParam(defaultValue = "10") int count) {
-        return filmService.getPopularFilms(count);
+        return filmServiceDB.getPopularFilms(count);
     }
 
     @ExceptionHandler

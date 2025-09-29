@@ -52,7 +52,7 @@ public class JdbcFilmRepository implements FilmRepository {
                             rs.getString("description"),
                             rs.getTimestamp("release_date").toLocalDateTime().toLocalDate(),
                             rs.getInt("duration"),
-                            new MPA( rs.getString("mpa_name")),
+                            new MPA(rs.getString("mpa_name")),
                             new ArrayList<>()
                     );
                     filmMap.put(filmId, film);
