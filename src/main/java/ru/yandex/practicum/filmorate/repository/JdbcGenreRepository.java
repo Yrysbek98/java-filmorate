@@ -47,8 +47,7 @@ public class JdbcGenreRepository implements GenreRepository {
     public List<Genre> getAllGenres() {
         String query = "SELECT genre_id, genre_name  FROM GENRES";
         Map<Integer, Genre> genreMap = new LinkedHashMap<>();
-        jdbc.query(query, rs ->
-        {
+        jdbc.query(query, rs -> {
             int genreId = rs.getInt("user_id");
             Genre genre = new Genre(
                     rs.getInt("id"),
