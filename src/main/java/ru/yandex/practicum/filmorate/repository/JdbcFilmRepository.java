@@ -6,8 +6,6 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.stereotype.Repository;
-import ru.yandex.practicum.filmorate.exception.FilmNotFoundException;
-import ru.yandex.practicum.filmorate.exception.FilmValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.MPA;
@@ -26,10 +24,10 @@ public class JdbcFilmRepository implements FilmRepository {
     @Override
     public Optional<Film> getFilmById(int id) {
         String query = """
-                SELECT f.film_id, f.name, f.description, f.release_date, f.duration, 
+                SELECT f.film_id, f.name, f.description, f.release_date, f.duration,
                        m.mpa_id, m.mpa_name,
                        g.genre_id, g.genre_name
-                FROM FILMS f 
+                FROM FILMS f
                 JOIN MPA m ON f.mpa_id = m.mpa_id
                 LEFT JOIN FILM_GENRES fg ON f.film_id = fg.film_id
                 LEFT JOIN GENRES g ON fg.genre_id = g.genre_id
@@ -126,7 +124,7 @@ public class JdbcFilmRepository implements FilmRepository {
     @Override
     public Film createFilm(Film film) {
         log.info("Create film: id={}, name={}", film.getId(), film.getName());
-        int mpaId = mpaRepository.findMpaIdByName(film.getMpa_id().getName());
+        int mpaId = mpaRepository.findMpaIdByName(film.getMpaId().getName());
 
 
         MapSqlParameterSource params = new MapSqlParameterSource();
@@ -172,7 +170,7 @@ public class JdbcFilmRepository implements FilmRepository {
     @Override
     public Film changeFilm(Film film) {
 
-        int mpaId = mpaRepository.findMpaIdByName(film.getMpa_id().getName());
+        int mpaId = mpaRepository.findMpaIdByName(film.getMpaId().getName());
         MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue("id", film.getId());
         params.addValue("name", film.getName());
