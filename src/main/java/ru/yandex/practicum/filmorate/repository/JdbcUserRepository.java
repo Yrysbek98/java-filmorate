@@ -44,8 +44,7 @@ public class JdbcUserRepository implements UserRepository {
                 FROM USERS AS u
                 """;
         Map<Integer, User> userMap = new LinkedHashMap<>();
-        jdbc.query(query, rs ->
-        {
+        jdbc.query(query, rs -> {
             int userId = rs.getInt("user_id");
             User user = new User(
                     rs.getString("email"),

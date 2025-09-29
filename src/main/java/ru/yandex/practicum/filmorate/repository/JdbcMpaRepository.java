@@ -44,8 +44,7 @@ public class JdbcMpaRepository implements MpaRepository {
     public List<MPA> getAllMpa() {
         String query = "SELECT mpa_id, mpa_name  FROM MPA";
         Map<Integer, MPA> mpaMap = new LinkedHashMap<>();
-        jdbc.query(query, rs ->
-        {
+        jdbc.query(query, rs -> {
             int mpaId = rs.getInt("user_id");
             MPA mpa = new MPA(
                     rs.getInt("id"),
