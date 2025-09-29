@@ -29,7 +29,7 @@ public class Film {
     private long duration;
     @JsonIgnore
     private Set<Integer> likes = new HashSet<>();
-    private MPA mpa_id;
+    private MPA mpaId;
     private List<Genre> genres = new ArrayList<>();
 
     public Film(String name, String description, LocalDate releaseDate, long duration) {
@@ -39,13 +39,13 @@ public class Film {
         this.duration = duration;
     }
 
-    public Film(int id, String name, String description, LocalDate releaseDate, long duration, MPA mpaId, List<Genre> genres ) {
+    public Film(int id, String name, String description, LocalDate releaseDate, long duration, MPA mpaId, List<Genre> genres) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.releaseDate = releaseDate;
         this.duration = duration;
-        this.mpa_id = mpaId;
+        this.mpaId = mpaId;
         this.genres = genres;
     }
 
