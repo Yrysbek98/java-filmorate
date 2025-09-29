@@ -11,7 +11,7 @@ public class MPA {
     private int id;
     private String name;
 
-    public MPA(String name){
+    public MPA(String name) {
         this.name = name;
     }
 
