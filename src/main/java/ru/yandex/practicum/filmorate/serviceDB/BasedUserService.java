@@ -30,6 +30,9 @@ public class BasedUserService implements UserServiceDB {
 
     @Override
     public User createUser(User user) {
+        if (user.getName() == null || user.getName().isBlank()) {
+            user.setName(user.getLogin());
+        }
         return userRepository.createUser(user);
     }
 
