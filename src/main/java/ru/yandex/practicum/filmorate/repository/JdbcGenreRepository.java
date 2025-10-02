@@ -24,7 +24,7 @@ public class JdbcGenreRepository implements GenreRepository {
     }
 
     @Override
-    public Optional<Genre> getGenreById(int id) {
+    public Genre getGenreById(int id) {
         String query = """
                 SELECT genre_id, genre_name
                 FROM GENRES
@@ -35,28 +35,30 @@ public class JdbcGenreRepository implements GenreRepository {
         params.addValue("id", id);
 
 
-        return Optional.ofNullable(jdbc.queryForObject(query, params, (rs, rowNum) -> {
-            int genreId = rs.getInt("genre_id");
-            String genreName = rs.getString("genre_name");
-            return new Genre(genreId, genreName);
-        }));
+        return jdbc.queryForObject(query, params, (rs, rowNum) ->
+                new Genre(
+                        rs.getInt("genre_id"),
+                        rs.getString("genre_name")
+                ));
 
     }
 
     @Override
     public List<Genre> getAllGenres() {
-        String query = "SELECT genre_id, genre_name  FROM GENRES";
+        String query = """
+                SELECT g.genre_id, g.genre_name
+                FROM GENRES AS g
+                """;
         Map<Integer, Genre> genreMap = new LinkedHashMap<>();
         jdbc.query(query, rs -> {
-            int genreId = rs.getInt("user_id");
+            int genreId = rs.getInt("genre_id");
             Genre genre = new Genre(
-                    rs.getInt("id"),
-                    rs.getString("name")
+                    genreId,
+                    rs.getString("genre_name")
             );
             genreMap.put(genreId, genre);
         });
         return new ArrayList<>(genreMap.values());
     }
-
 
 }

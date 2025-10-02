@@ -2,9 +2,9 @@ package ru.yandex.practicum.filmorate.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.validation.constraints.*;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.lang.Nullable;
 import ru.yandex.practicum.filmorate.helper.ReleaseDateConstraint;
 
 import java.time.LocalDate;
@@ -15,7 +15,6 @@ import java.util.Set;
 
 
 @NoArgsConstructor
-@AllArgsConstructor
 @Data
 public class Film {
     private int id;
@@ -26,26 +25,35 @@ public class Film {
     @ReleaseDateConstraint
     private LocalDate releaseDate;
     @Positive(message = "Продолжительность фильма должна быть положительным числом.")
-    private long duration;
+    private int duration;
     @JsonIgnore
     private Set<Integer> likes = new HashSet<>();
-    private MPA mpaId;
+    @Nullable
+    private MPA mpa;
     private List<Genre> genres = new ArrayList<>();
 
-    public Film(String name, String description, LocalDate releaseDate, long duration) {
+    public Film(String name, String description, LocalDate releaseDate, int duration) {
         this.name = name;
         this.description = description;
         this.releaseDate = releaseDate;
         this.duration = duration;
     }
 
-    public Film(int id, String name, String description, LocalDate releaseDate, long duration, MPA mpaId, List<Genre> genres) {
+    public Film(int id, String name, String description, LocalDate releaseDate, int duration) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.releaseDate = releaseDate;
         this.duration = duration;
-        this.mpaId = mpaId;
+    }
+
+    public Film(int id, String name, String description, LocalDate releaseDate, int duration, MPA mpa, List<Genre> genres) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.releaseDate = releaseDate;
+        this.duration = duration;
+        this.mpa = mpa;
         this.genres = genres;
     }
 

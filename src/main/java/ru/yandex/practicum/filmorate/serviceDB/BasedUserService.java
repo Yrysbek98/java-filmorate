@@ -37,7 +37,7 @@ public class BasedUserService implements UserServiceDB {
     }
 
     @Override
-    public User changeUser(User user) {
+    public Optional<User> changeUser(User user) {
         final User u = userRepository.getUserById(user.getId())
                 .orElseThrow(() -> new UserNotFoundException("Пользователь с таким " + user.getId() + " не найден"));
 
@@ -45,7 +45,7 @@ public class BasedUserService implements UserServiceDB {
             u.setName(u.getLogin());
         }
 
-        return userRepository.changeUser(u);
+        return userRepository.changeUser(user);
     }
 
     @Override

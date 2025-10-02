@@ -15,6 +15,7 @@ import ru.yandex.practicum.filmorate.serviceDB.UserServiceDB;
 
 
 import java.util.List;
+import java.util.Optional;
 
 
 @Slf4j
@@ -36,7 +37,7 @@ public class UserController {
     }
 
     @PutMapping
-    public User changeUser(@Valid @RequestBody User user) {
+    public Optional<User> changeUser(@Valid @RequestBody User user) {
         return userServiceDB.changeUser(user);
     }
 

@@ -18,19 +18,20 @@ public class BasedMpaService implements MpaServiceDB {
     final MpaRepository mpaRepository;
 
     @Override
-    public int findMpaIdByName(String mpaName) {
+    public Optional<Integer> findMpaIdByName(String mpaName) {
         final int id = mpaRepository.findMpaIdByName(mpaName);
-        final MPA mpa = mpaRepository.getMpaById(id).orElseThrow(() -> new MpaNotFoundException("Рейтинг с таким " + mpaName + " не найден"));
-        return id;
+        return Optional.of(id);
     }
 
     @Override
-    public Optional<MPA> getMpaById(int id) {
+    public MPA getMpaById(int id) {
         if (id < 1) {
             throw new MpaValidationException("Некорректный id рейтинга");
         }
-        final MPA mpa = mpaRepository.getMpaById(id).orElseThrow(() -> new MpaNotFoundException("Рейтинг с таким " + id + " не найден"));
-        return Optional.ofNullable(mpa);
+        if (id > 5) {
+            throw new MpaNotFoundException("Нет такого рейтинга");
+        }
+        return mpaRepository.getMpaById(id);
     }
 
     @Override

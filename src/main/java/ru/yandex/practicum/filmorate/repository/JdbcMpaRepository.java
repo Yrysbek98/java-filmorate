@@ -22,9 +22,9 @@ public class JdbcMpaRepository implements MpaRepository {
     }
 
     @Override
-    public Optional<MPA> getMpaById(int id) {
+    public MPA getMpaById(int id) {
         String query = """
-                SELECT mpa_id, mpa_name
+                SELECT mpa_id, name
                 FROM MPA
                 WHERE  mpa_id = :id
                 """;
@@ -33,27 +33,31 @@ public class JdbcMpaRepository implements MpaRepository {
         params.addValue("id", id);
 
 
-        return Optional.ofNullable(jdbc.queryForObject(query, params, (rs, rowNum) -> {
-            int genreId = rs.getInt("mpa_id");
-            String genreName = rs.getString("mpa_name");
-            return new MPA(genreId, genreName);
-        }));
+        return jdbc.queryForObject(query, params, (rs, rowNum) ->
+                new MPA(
+                        rs.getInt("mpa_id"),
+                        rs.getString("name")
+                )
+        );
+
+
     }
 
     @Override
     public List<MPA> getAllMpa() {
-        String query = "SELECT mpa_id, mpa_name  FROM MPA";
+        String query = """
+                SELECT m.mpa_id, m.name
+                FROM MPA AS m
+                """;
         Map<Integer, MPA> mpaMap = new LinkedHashMap<>();
         jdbc.query(query, rs -> {
-            int mpaId = rs.getInt("user_id");
+            int mpaId = rs.getInt("mpa_id");
             MPA mpa = new MPA(
-                    rs.getInt("id"),
+                    mpaId,
                     rs.getString("name")
             );
             mpaMap.put(mpaId, mpa);
         });
         return new ArrayList<>(mpaMap.values());
     }
-
-
 }

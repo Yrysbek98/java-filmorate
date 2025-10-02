@@ -13,7 +13,7 @@ public interface UserRepository {
 
     User createUser(User user);
 
-    User changeUser(User user);
+    Optional<User> changeUser(User user);
 
     void addFriend(int idOfUser, int idOfFriend);
 

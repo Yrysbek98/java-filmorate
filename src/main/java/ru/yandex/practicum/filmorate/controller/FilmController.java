@@ -13,6 +13,7 @@ import ru.yandex.practicum.filmorate.serviceDB.FilmServiceDB;
 
 import java.util.List;
 
+
 @Slf4j
 @RestController
 @RequestMapping("/films")
@@ -23,6 +24,12 @@ public class FilmController {
     @GetMapping
     public List<Film> findAllFilms() {
         return filmServiceDB.findAllFilms();
+    }
+
+    @GetMapping("/{id}")
+    public Film getFilmByIdWithGenre(
+            @PathVariable int id) {
+        return filmServiceDB.getFilmByIdWithGenre(id);
     }
 
     @PostMapping

@@ -1,4 +1,4 @@
-MERGE INTO MPA (MPA_ID, MPA_NAME)
+MERGE INTO MPA (MPA_ID, NAME)
     KEY(MPA_ID)
     VALUES
         (1, 'G'),

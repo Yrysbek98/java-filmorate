@@ -3,12 +3,13 @@ package ru.yandex.practicum.filmorate.repository;
 import ru.yandex.practicum.filmorate.model.Film;
 
 import java.util.List;
-import java.util.Optional;
 
 
 public interface FilmRepository {
 
-    Optional<Film> getFilmById(int id);
+    Film getFilmById(int id);
+
+    Film getFilmByIdWithGenre(int id);
 
     List<Film> findAllFilms();
 

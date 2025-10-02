@@ -30,7 +30,7 @@ public class JdbcUserRepository implements UserRepository {
                         rs.getString("email"),
                         rs.getString("login"),
                         rs.getString("name"),
-                        rs.getTimestamp("birthday").toLocalDateTime().toLocalDate()
+                        rs.getDate("birthday").toLocalDate()
                 )
         );
 
@@ -43,17 +43,23 @@ public class JdbcUserRepository implements UserRepository {
                 SELECT u.user_id, u.email, u.login, u.name, u.birthday
                 FROM USERS AS u
                 """;
+
         Map<Integer, User> userMap = new LinkedHashMap<>();
+
         jdbc.query(query, rs -> {
             int userId = rs.getInt("user_id");
+
             User user = new User(
+                    userId,  // Добавили ID!
                     rs.getString("email"),
                     rs.getString("login"),
                     rs.getString("name"),
-                    rs.getTimestamp("birthday").toLocalDateTime().toLocalDate()
+                    rs.getDate("birthday").toLocalDate()
             );
+
             userMap.put(userId, user);
         });
+
         return new ArrayList<>(userMap.values());
     }
 
@@ -76,7 +82,7 @@ public class JdbcUserRepository implements UserRepository {
     }
 
     @Override
-    public User changeUser(User user) {
+    public Optional<User> changeUser(User user) {
 
         MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue("email", user.getEmail());
@@ -86,23 +92,22 @@ public class JdbcUserRepository implements UserRepository {
         params.addValue("id", user.getId());
 
         String updateUserQuery = """
-                    UPDATE USERS
-                    SET email = :email,
-                        login = :login,
-                        name = :name,
-                        birthday = :birthday
-                    WHERE user_id = :id
+                UPDATE USERS
+                SET EMAIL = :email, LOGIN = :login, NAME = :name, BIRTHDAY = :birthday
+                WHERE user_id = :id
                 """;
-
         jdbc.update(updateUserQuery, params);
-        return user;
+
+        return getUserById(user.getId());
+
+
     }
 
     @Override
     public void addFriend(int idOfUser, int idOfFriend) {
         String addFriendQuery = """
-                INSERT INTO FRIENDS(idOfUser, idOfFriend)
-                VALUES(:idOfUser, :idOfFriend)
+                INSERT INTO FRIENDS (user_id, friend_id)
+                VALUES (:userId, :friendId)
                 """;
         Map<String, Object> params = Map.of(
                 "userId", idOfUser,
@@ -115,11 +120,11 @@ public class JdbcUserRepository implements UserRepository {
     public void deleteFriend(int idOfUser, int idOfFriend) {
         String deleteFriendQuery = """
                  DELETE FROM FRIENDS
-                 WHERE user_id = :idOfUser AND friend_id = :idOfFriend
+                 WHERE user_id = :userId AND friend_id = :friendId
                 """;
         Map<String, Object> params = Map.of(
-                "user_id", idOfUser,
-                "friend_id", idOfFriend
+                "userId", idOfUser,
+                "friendId", idOfFriend
         );
         jdbc.update(deleteFriendQuery, params);
     }
@@ -127,10 +132,10 @@ public class JdbcUserRepository implements UserRepository {
     @Override
     public List<User> getSameFriends(int idOfUser, int idOfFriend) {
         String sameFriendsQuery = """
-                SELECT u.id, u.email, u.login, u.name, u.birthday
+                SELECT u.user_id, u.email, u.login, u.name, u.birthday
                 FROM FRIENDS f1
                 JOIN FRIENDS f2 ON f1.friend_id = f2.friend_id
-                JOIN USERS u ON u.id = f1.friend_id
+                JOIN USERS u ON u.user_id = f1.friend_id
                 WHERE f1.user_id = :idOfUser
                   AND f2.user_id = :idOfFriend
                 """;
@@ -141,31 +146,29 @@ public class JdbcUserRepository implements UserRepository {
         );
 
         return jdbc.query(sameFriendsQuery, params, (rs, rowNum) -> new User(
-                rs.getInt("id"),
+                rs.getInt("user_id"),
                 rs.getString("email"),
                 rs.getString("login"),
                 rs.getString("name"),
-                rs.getTimestamp("birthday").toLocalDateTime().toLocalDate()
+                rs.getDate("birthday").toLocalDate()
         ));
     }
 
     @Override
-    public List<User> getFriends(int idOfUser) {
-        String friendQuery = """
-                SELECT u.id, u.email, u.login, u.name, u.birthday
-                FROM FRIENDS AS f
-                JOIN USERS u ON u.id = f.friend_id
-                WHERE f.user_id = :idOfUser
+    public List<User> getFriends(int userId) {
+        String sql = """
+                    SELECT u.user_id, u.email, u.login, u.name, u.birthday
+                    FROM FRIENDS f
+                    JOIN USERS u ON u.user_id = f.friend_id
+                    WHERE f.user_id = :userId
                 """;
-        Map<String, Object> params = Map.of(
-                "idOfUser", idOfUser
-        );
-        return jdbc.query(friendQuery, params, (rs, rowNum) -> new User(
-                rs.getInt("id"),
+
+        return jdbc.query(sql, Map.of("userId", userId), (rs, rowNum) -> new User(
+                rs.getInt("user_id"),
                 rs.getString("email"),
                 rs.getString("login"),
                 rs.getString("name"),
-                rs.getTimestamp("birthday").toLocalDateTime().toLocalDate()
+                rs.getDate("birthday").toLocalDate()
         ));
     }
 

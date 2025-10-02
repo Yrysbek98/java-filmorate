@@ -6,9 +6,9 @@ import java.util.List;
 import java.util.Optional;
 
 public interface MpaServiceDB {
-    int findMpaIdByName(String mpaName);
+    Optional<Integer> findMpaIdByName(String mpaName);
 
-    Optional<MPA> getMpaById(int id);
+    MPA getMpaById(int id);
 
     List<MPA> getAllMpa();
 
