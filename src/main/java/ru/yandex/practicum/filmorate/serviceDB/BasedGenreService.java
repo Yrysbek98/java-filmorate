@@ -8,6 +8,7 @@ import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.repository.GenreRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 
 @Service
@@ -22,12 +23,9 @@ public class BasedGenreService implements GenreServiceDB {
     }
 
     @Override
-    public Genre getGenreById(int id) {
-        if (id < 1) {
-            throw new GenreValidationException("Некорректный id жанра");
-        }
-        if (id > 6) {
-            throw new GenreNotFoundException("Не найден такой жанр");
+    public Optional<Genre> getGenreById(int id) {
+        if (genreRepository.getGenreById(id).isEmpty()) {
+            throw new GenreNotFoundException("Жанр с таким id= " + id + " не найден");
         }
         return genreRepository.getGenreById(id);
     }

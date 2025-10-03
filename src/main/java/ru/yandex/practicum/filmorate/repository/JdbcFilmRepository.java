@@ -27,37 +27,22 @@ public class JdbcFilmRepository implements FilmRepository {
     }
 
     @Override
-    public Film getFilmById(int id) {
+    public Optional<Film> getFilmById(int id) {
         String query = """
-                SELECT f.film_id, f.name, f.description, f.release_date, f.duration,
-                FROM FILMS f
-                WHERE f.film_id = :id
-                """;
+            SELECT f.film_id, f.name, f.description, f.release_date, f.duration
+            FROM FILMS f
+            WHERE f.film_id = :id
+            """;
 
-        Map<String, Object> params = Map.of("id", id);
+        List<Film> films = jdbc.query(query, Map.of("id", id), (rs, rowNum) -> new Film(
+                rs.getInt("film_id"),
+                rs.getString("name"),
+                rs.getString("description"),
+                rs.getDate("release_date").toLocalDate(),
+                rs.getInt("duration")
+        ));
 
-        List<Film> films = jdbc.query(query, params, rs -> {
-            Map<Integer, Film> filmMap = new HashMap<>();
-
-            while (rs.next()) {
-                int filmId = rs.getInt("film_id");
-                Film film = filmMap.get(filmId);
-
-                if (film == null) {
-                    film = new Film(
-                            filmId,
-                            rs.getString("name"),
-                            rs.getString("description"),
-                            rs.getDate("release_date").toLocalDate(),
-                            rs.getInt("duration")
-                    );
-                    filmMap.put(filmId, film);
-                }
-            }
-            return new ArrayList<>(filmMap.values());
-        });
-
-        return films.get(0);
+        return films.stream().findFirst();
     }
 
     @Override
@@ -185,7 +170,7 @@ public class JdbcFilmRepository implements FilmRepository {
     }
 
     @Override
-    public Film changeFilm(Film film) {
+    public Optional<Film> changeFilm(Film film) {
         MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue("id", film.getId());
         params.addValue("name", film.getName());

@@ -57,7 +57,7 @@ public class UserController {
         userServiceDB.deleteFriend(id, friendId);
     }
 
-    @GetMapping("{id}/friends/common/{otherId}")
+    @GetMapping("/{id}/friends/common/{otherId}")
     public List<User> getSameFriends(
             @PathVariable int id,
             @PathVariable int otherId

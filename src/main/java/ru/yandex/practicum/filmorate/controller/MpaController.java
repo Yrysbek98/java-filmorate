@@ -11,6 +11,7 @@ import ru.yandex.practicum.filmorate.model.MPA;
 import ru.yandex.practicum.filmorate.serviceDB.MpaServiceDB;
 
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @RestController
@@ -25,7 +26,7 @@ public class MpaController {
     }
 
     @GetMapping("/{id}")
-    public MPA getMpaById(
+    public Optional<MPA> getMpaById(
             @PathVariable int id) {
         return mpaServiceDB.getMpaById(id);
     }

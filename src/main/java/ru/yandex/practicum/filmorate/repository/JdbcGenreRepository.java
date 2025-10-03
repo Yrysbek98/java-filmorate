@@ -24,7 +24,7 @@ public class JdbcGenreRepository implements GenreRepository {
     }
 
     @Override
-    public Genre getGenreById(int id) {
+    public Optional<Genre> getGenreById(int id) {
         String query = """
                 SELECT genre_id, genre_name
                 FROM GENRES
@@ -35,11 +35,12 @@ public class JdbcGenreRepository implements GenreRepository {
         params.addValue("id", id);
 
 
-        return jdbc.queryForObject(query, params, (rs, rowNum) ->
+        List<Genre> genres =  jdbc.query(query, params, (rs, rowNum) ->
                 new Genre(
                         rs.getInt("genre_id"),
                         rs.getString("genre_name")
                 ));
+        return genres.stream().findFirst();
 
     }
 

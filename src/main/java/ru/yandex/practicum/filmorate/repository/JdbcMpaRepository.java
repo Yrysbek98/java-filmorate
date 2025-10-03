@@ -16,30 +16,30 @@ public class JdbcMpaRepository implements MpaRepository {
 
     @Override
     public int findMpaIdByName(String mpaName) {
-        String query = "SELECT mpa_id FROM MPA WHERE mpa_name = :name";
+        String query = "SELECT mpa_id FROM MPA WHERE name = :name";
         Map<String, Object> params = Map.of("name", mpaName);
         return jdbc.queryForObject(query, params, Integer.class);
     }
 
     @Override
-    public MPA getMpaById(int id) {
+    public Optional<MPA> getMpaById(int id) {
         String query = """
-                SELECT mpa_id, name
-                FROM MPA
-                WHERE  mpa_id = :id
-                """;
+            SELECT mpa_id, name
+            FROM MPA
+            WHERE mpa_id = :id
+            """;
 
         MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue("id", id);
 
-
-        return jdbc.queryForObject(query, params, (rs, rowNum) ->
+        List<MPA> result = jdbc.query(query, params, (rs, rowNum) ->
                 new MPA(
                         rs.getInt("mpa_id"),
                         rs.getString("name")
                 )
         );
 
+        return result.stream().findFirst();
 
     }
 

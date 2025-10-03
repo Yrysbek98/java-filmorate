@@ -10,21 +10,25 @@ import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.MPA;
 import ru.yandex.practicum.filmorate.repository.FilmRepository;
+import ru.yandex.practicum.filmorate.repository.GenreRepository;
+import ru.yandex.practicum.filmorate.repository.MpaRepository;
 
 
 import java.util.List;
+import java.util.Optional;
 
 
 @Service
 @RequiredArgsConstructor
 public class BasedFilmService implements FilmServiceDB {
     final FilmRepository filmRepository;
-
+    final MpaRepository mpaRepository;
+    final GenreRepository genreRepository;
 
     @Override
-    public Film getFilmById(int id) {
-        final Film f = filmRepository.getFilmById(id);
-        if (f == null) {
+    public Optional<Film> getFilmById(int id) {
+        final Optional<Film> f = filmRepository.getFilmById(id);
+        if (f.isEmpty()) {
             throw new FilmNotFoundException("Фильм с таким " + id + " не найден");
         }
         return filmRepository.getFilmById(id);
@@ -43,16 +47,16 @@ public class BasedFilmService implements FilmServiceDB {
 
     @Override
     public Film createFilm(Film film) {
-        final MPA mpa = film.getMpa();
-        if (mpa == null || mpa.getId() < 1 || mpa.getId() > 6) {
-            throw new MpaNotFoundException("MPA not found");
+        Optional<MPA> mpa = mpaRepository.getMpaById(film.getMpa().getId());
+        if (mpa.isEmpty()) {
+            throw new MpaNotFoundException("Рейтинг с таким id= " + film.getMpa().getId() + " не найден");
         }
 
         final List<Genre> genres = film.getGenres();
         if (genres != null && !genres.isEmpty()) {
             for (Genre genre : genres) {
-                if (genre.getId() < 1 || genre.getId() > 7) {
-                    throw new GenreNotFoundException("Genre not found");
+                if (genreRepository.getGenreById(genre.getId()).isEmpty()) {
+                    throw new GenreNotFoundException("Жанр с таким id= " + genre.getId() + " не найден");
                 }
             }
         }
@@ -62,9 +66,9 @@ public class BasedFilmService implements FilmServiceDB {
     }
 
     @Override
-    public Film changeFilm(Film film) {
-        final Film f = filmRepository.getFilmById(film.getId());
-        if (f == null) {
+    public Optional<Film> changeFilm(Film film) {
+        final Optional<Film> f = filmRepository.getFilmById(film.getId());
+        if (f.isEmpty()) {
             throw new FilmNotFoundException("Фильм с таким " + film.getId() + " не найден");
         }
 
@@ -79,8 +83,8 @@ public class BasedFilmService implements FilmServiceDB {
         if (userId < 1) {
             throw new FilmValidationException("Некорректный id пользователя");
         }
-        final Film f = filmRepository.getFilmById(id);
-        if (f == null) {
+        final Optional<Film> f = filmRepository.getFilmById(id);
+        if (f.isEmpty()) {
             throw new FilmNotFoundException("Фильм с таким " + id + " не найден");
         }
         filmRepository.addLike(id, userId);
@@ -94,8 +98,8 @@ public class BasedFilmService implements FilmServiceDB {
         if (userId < 1) {
             throw new FilmValidationException("Некорректный id пользователя");
         }
-        final Film f = filmRepository.getFilmById(id);
-        if (f == null) {
+        final Optional<Film> f = filmRepository.getFilmById(id);
+        if (f.isEmpty()) {
             throw new FilmNotFoundException("Фильм с таким " + id + " не найден");
         }
         filmRepository.deleteLike(id, userId);

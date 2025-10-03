@@ -24,12 +24,10 @@ public class BasedMpaService implements MpaServiceDB {
     }
 
     @Override
-    public MPA getMpaById(int id) {
-        if (id < 1) {
-            throw new MpaValidationException("Некорректный id рейтинга");
-        }
-        if (id > 5) {
-            throw new MpaNotFoundException("Нет такого рейтинга");
+    public Optional<MPA> getMpaById(int id) {
+        Optional<MPA> mpa = mpaRepository.getMpaById(id);
+        if (mpa.isEmpty()) {
+            throw new MpaNotFoundException("Рейтинг с таким id= " + id + " не найден");
         }
         return mpaRepository.getMpaById(id);
     }

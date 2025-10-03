@@ -8,7 +8,7 @@ import java.util.Optional;
 public interface MpaServiceDB {
     Optional<Integer> findMpaIdByName(String mpaName);
 
-    MPA getMpaById(int id);
+    Optional<MPA> getMpaById(int id);
 
     List<MPA> getAllMpa();
 

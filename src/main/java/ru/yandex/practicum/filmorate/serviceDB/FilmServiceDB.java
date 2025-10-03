@@ -3,11 +3,12 @@ package ru.yandex.practicum.filmorate.serviceDB;
 import ru.yandex.practicum.filmorate.model.Film;
 
 import java.util.List;
+import java.util.Optional;
 
 
 public interface FilmServiceDB {
 
-    Film getFilmById(int id);
+    Optional<Film> getFilmById(int id);
 
     Film getFilmByIdWithGenre(int id);
 
@@ -15,7 +16,7 @@ public interface FilmServiceDB {
 
     Film createFilm(Film film);
 
-    Film changeFilm(Film film);
+    Optional<Film> changeFilm(Film film);
 
     void addLike(int id, int userId);
 
