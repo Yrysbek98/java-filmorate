@@ -3,7 +3,6 @@ package ru.yandex.practicum.filmorate.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.validation.constraints.*;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.lang.Nullable;
@@ -14,7 +13,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 @NoArgsConstructor
-@AllArgsConstructor
 @Data
 public class User {
     private int id;
@@ -33,6 +31,14 @@ public class User {
 
 
     public User(String email, String login, String name, LocalDate birthday) {
+        this.email = email;
+        this.login = login;
+        this.name = name;
+        this.birthday = birthday;
+    }
+
+    public User(int id, String email, String login, String name, LocalDate birthday) {
+        this.id = id;
         this.email = email;
         this.login = login;
         this.name = name;
