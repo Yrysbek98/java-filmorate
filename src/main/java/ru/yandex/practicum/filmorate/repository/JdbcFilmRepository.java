@@ -29,10 +29,10 @@ public class JdbcFilmRepository implements FilmRepository {
     @Override
     public Optional<Film> getFilmById(int id) {
         String query = """
-            SELECT f.film_id, f.name, f.description, f.release_date, f.duration
-            FROM FILMS f
-            WHERE f.film_id = :id
-            """;
+                SELECT f.film_id, f.name, f.description, f.release_date, f.duration
+                FROM FILMS f
+                WHERE f.film_id = :id
+                """;
 
         List<Film> films = jdbc.query(query, Map.of("id", id), (rs, rowNum) -> new Film(
                 rs.getInt("film_id"),

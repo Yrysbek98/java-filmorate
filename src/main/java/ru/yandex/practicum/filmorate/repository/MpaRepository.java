@@ -8,7 +8,7 @@ import java.util.Optional;
 public interface MpaRepository {
     int findMpaIdByName(String mpaName);
 
-   Optional<MPA>  getMpaById(int id);
+    Optional<MPA> getMpaById(int id);
 
     List<MPA> getAllMpa();
 }

@@ -5,7 +5,6 @@ import org.springframework.stereotype.Service;
 
 import ru.yandex.practicum.filmorate.exception.MpaNotFoundException;
 
-import ru.yandex.practicum.filmorate.exception.MpaValidationException;
 import ru.yandex.practicum.filmorate.model.MPA;
 import ru.yandex.practicum.filmorate.repository.MpaRepository;
 

@@ -35,7 +35,7 @@ public class JdbcGenreRepository implements GenreRepository {
         params.addValue("id", id);
 
 
-        List<Genre> genres =  jdbc.query(query, params, (rs, rowNum) ->
+        List<Genre> genres = jdbc.query(query, params, (rs, rowNum) ->
                 new Genre(
                         rs.getInt("genre_id"),
                         rs.getString("genre_name")

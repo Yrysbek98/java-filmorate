@@ -27,9 +27,9 @@ public class GenreController {
     }
 
     @GetMapping("/{id}")
-    public Optional<Genre> getGenreById(
-            @PathVariable int id) {
-        return genreServiceDB.getGenreById(id);
+    public Genre getGenreById(@PathVariable int id) {
+        return genreServiceDB.getGenreById(id)
+                .orElseThrow(() -> new GenreNotFoundException("Жанр с id=" + id + " не найден"));
     }
 
     @ExceptionHandler

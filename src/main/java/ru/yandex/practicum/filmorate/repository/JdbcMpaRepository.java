@@ -24,10 +24,10 @@ public class JdbcMpaRepository implements MpaRepository {
     @Override
     public Optional<MPA> getMpaById(int id) {
         String query = """
-            SELECT mpa_id, name
-            FROM MPA
-            WHERE mpa_id = :id
-            """;
+                SELECT mpa_id, name
+                FROM MPA
+                WHERE mpa_id = :id
+                """;
 
         MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue("id", id);
