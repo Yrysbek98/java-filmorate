@@ -14,7 +14,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class BasedReviewService implements ReviewServiceDB{
+public class BasedReviewService implements ReviewServiceDB {
     final ReviewRepository reviewRepository;
     final FilmRepository filmRepository;
     final UserRepository userRepository;
@@ -24,13 +24,13 @@ public class BasedReviewService implements ReviewServiceDB{
         if (userRepository.getUserById(review.getUserId()).isEmpty()) {
             throw new UserNotFoundException("Пользователь с id=" + review.getUserId() + " не найден");
         }
-        if (review.getUserId() == null ){
+        if (review.getUserId() == null) {
             throw new UserNotFoundException("Пользователь не может быть null");
         }
         if (filmRepository.getFilmById(review.getFilmId()).isEmpty()) {
             throw new FilmNotFoundException("Фильм с id=" + review.getFilmId() + " не найден");
         }
-        if (review.getFilmId() == null ){
+        if (review.getFilmId() == null) {
             throw new FilmNotFoundException("Фильм не может быть null");
         }
 
@@ -41,8 +41,8 @@ public class BasedReviewService implements ReviewServiceDB{
     @Override
     public Optional<Review> updateReview(Review review) {
         Optional<Review> r = reviewRepository.getReviewById(review.getReviewId());
-        if (r.isEmpty()){
-            throw  new ReviewNotFoundException("Отзыв с таким id=" + review.getReviewId() + " не  найден");
+        if (r.isEmpty()) {
+            throw new ReviewNotFoundException("Отзыв с таким id=" + review.getReviewId() + " не  найден");
         }
         return reviewRepository.updateReview(review);
     }
@@ -50,8 +50,8 @@ public class BasedReviewService implements ReviewServiceDB{
     @Override
     public void deleteReview(int id) {
         Optional<Review> r = reviewRepository.getReviewById(id);
-        if (r.isEmpty()){
-            throw  new ReviewNotFoundException("Отзыв с таким id=" + id + " не  найден");
+        if (r.isEmpty()) {
+            throw new ReviewNotFoundException("Отзыв с таким id=" + id + " не  найден");
         }
         reviewRepository.deleteReview(id);
     }
@@ -81,55 +81,55 @@ public class BasedReviewService implements ReviewServiceDB{
     }
 
     @Override
-    public void addLikeToReview(int review_id, int user_id) {
-        Optional<Review> r = reviewRepository.getReviewById(review_id);
+    public void addLikeToReview(int reviewId, int userId) {
+        Optional<Review> r = reviewRepository.getReviewById(reviewId);
         if (r.isEmpty()) {
             throw new ReviewNotFoundException("Отзыв не найден");
         }
-        Optional<User> u = userRepository.getUserById(user_id);
-        if (u.isEmpty()){
+        Optional<User> u = userRepository.getUserById(userId);
+        if (u.isEmpty()) {
             throw new UserNotFoundException("Пользователь не найден");
         }
-        reviewRepository.addLikeToReview(review_id,user_id);
+        reviewRepository.addLikeToReview(reviewId, userId);
     }
 
     @Override
-    public Optional<Review> addDislikeToReview(int review_id, int user_id) {
-        Optional<Review> r = reviewRepository.getReviewById(review_id);
+    public Optional<Review> addDislikeToReview(int reviewId, int userId) {
+        Optional<Review> r = reviewRepository.getReviewById(reviewId);
         if (r.isEmpty()) {
             throw new ReviewNotFoundException("Отзыв не найден");
         }
-        Optional<User> u = userRepository.getUserById(user_id);
-        if (u.isEmpty()){
+        Optional<User> u = userRepository.getUserById(userId);
+        if (u.isEmpty()) {
             throw new UserNotFoundException("Пользователь не найден");
         }
-        return reviewRepository.addDislikeToReview(review_id,user_id);
+        return reviewRepository.addDislikeToReview(reviewId, userId);
     }
 
     @Override
-    public void deleteLikeToReview(int review_id, int user_id) {
-        Optional<Review> r = reviewRepository.getReviewById(review_id);
+    public void deleteLikeToReview(int reviewId, int userId) {
+        Optional<Review> r = reviewRepository.getReviewById(reviewId);
         if (r.isEmpty()) {
             throw new ReviewNotFoundException("Отзыв не найден");
         }
-        Optional<User> u = userRepository.getUserById(user_id);
-        if (u.isEmpty()){
+        Optional<User> u = userRepository.getUserById(userId);
+        if (u.isEmpty()) {
             throw new UserNotFoundException("Пользователь не найден");
         }
-        reviewRepository.deleteLikeToReview(review_id, user_id);
+        reviewRepository.deleteLikeToReview(reviewId, userId);
     }
 
     @Override
-    public void deleteDislikeToReview(int review_id, int user_id) {
-        Optional<Review> r = reviewRepository.getReviewById(review_id);
+    public void deleteDislikeToReview(int reviewId, int userId) {
+        Optional<Review> r = reviewRepository.getReviewById(reviewId);
         if (r.isEmpty()) {
             throw new ReviewNotFoundException("Отзыв не найден");
         }
-        Optional<User> u = userRepository.getUserById(user_id);
-        if (u.isEmpty()){
+        Optional<User> u = userRepository.getUserById(userId);
+        if (u.isEmpty()) {
             throw new UserNotFoundException("Пользователь не найден");
         }
 
-        reviewRepository.deleteDislikeToReview(review_id,user_id );
+        reviewRepository.deleteDislikeToReview(reviewId, userId);
     }
 }

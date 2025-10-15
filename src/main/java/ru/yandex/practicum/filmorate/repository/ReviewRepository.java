@@ -16,11 +16,11 @@ public interface ReviewRepository {
 
     List<Review> getAllReviews(Integer filmId, Integer count);
 
-    void addLikeToReview(int review_id, int user_id);
+    void addLikeToReview(int reviewId, int userId);
 
-    Optional<Review> addDislikeToReview(int review_id, int user_id);
+    Optional<Review> addDislikeToReview(int reviewId, int userId);
 
-    void deleteLikeToReview(int review_id, int user_id);
+    void deleteLikeToReview(int reviewId, int userId);
 
-    void deleteDislikeToReview(int review_id, int user_id);
+    void deleteDislikeToReview(int reviewId, int userId);
 }
