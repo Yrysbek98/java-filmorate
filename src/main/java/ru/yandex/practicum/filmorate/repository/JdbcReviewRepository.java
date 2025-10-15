@@ -120,10 +120,10 @@ public class JdbcReviewRepository implements ReviewRepository {
     }
 
     @Override
-    public void addLikeToReview(int review_id, int user_id) {
-        Optional<Review> reviewOpt = getReviewById(review_id);
+    public void addLikeToReview(int reviewId, int userId) {
+        Optional<Review> reviewOpt = getReviewById(reviewId);
         MapSqlParameterSource params = new MapSqlParameterSource();
-        params.addValue("id", review_id);
+        params.addValue("id", reviewId);
         String updateReview = """
                 UPDATE REVIEWS
                 SET  USEFUL = USEFUL + 1
@@ -135,9 +135,9 @@ public class JdbcReviewRepository implements ReviewRepository {
     }
 
     @Override
-    public Optional<Review> addDislikeToReview(int review_id, int user_id) {
+    public Optional<Review> addDislikeToReview(int reviewId, int userId) {
         MapSqlParameterSource params = new MapSqlParameterSource();
-        params.addValue("id", review_id);
+        params.addValue("id", reviewId);
 
         String updateReview = """
                 UPDATE REVIEWS
@@ -146,15 +146,15 @@ public class JdbcReviewRepository implements ReviewRepository {
                 """;
         jdbc.update(updateReview, params);
 
-        return getReviewById(review_id);
+        return getReviewById(reviewId);
     }
 
     @Override
-    public void deleteLikeToReview(int review_id, int user_id) {
-        Optional<Review> reviewOpt = getReviewById(review_id);
+    public void deleteLikeToReview(int reviewId, int userId) {
+        Optional<Review> reviewOpt = getReviewById(reviewId);
         Review review = reviewOpt.get();
         MapSqlParameterSource params = new MapSqlParameterSource();
-        params.addValue("id", review_id);
+        params.addValue("id", reviewId);
         String updateReview = """
                 UPDATE REVIEWS
                 SET USEFUL = USEFUL - 1
@@ -165,10 +165,10 @@ public class JdbcReviewRepository implements ReviewRepository {
     }
 
     @Override
-    public void deleteDislikeToReview(int review_id, int user_id) {
-        Optional<Review> reviewOpt = getReviewById(review_id);
+    public void deleteDislikeToReview(int reviewId, int userId) {
+        Optional<Review> reviewOpt = getReviewById(reviewId);
         MapSqlParameterSource params = new MapSqlParameterSource();
-        params.addValue("id", review_id);
+        params.addValue("id", reviewId);
         String updateReview = """
                 UPDATE REVIEWS
                 SET  USEFUL = USEFUL + 1
