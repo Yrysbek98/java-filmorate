@@ -111,6 +111,6 @@ public class BasedFilmService implements FilmServiceDB {
             throw new FilmValidationException("Количество фильмов должно быть положительным числом");
         }
 
-        return filmRepository.getPopularFilms(count, genreId,year);
+        return filmRepository.getPopularFilms(count, genreId, year);
     }
 }

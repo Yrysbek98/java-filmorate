@@ -54,7 +54,6 @@ public class RecommendationService {
             }
 
             Set<Integer> otherUserLikes = entry.getValue();
-            
             double similarity = calculateSimilarity(currentUserLikes, otherUserLikes);
 
             if (similarity > maxSimilarity) {

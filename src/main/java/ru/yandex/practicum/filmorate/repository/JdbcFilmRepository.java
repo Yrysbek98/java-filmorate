@@ -315,13 +315,13 @@ public class JdbcFilmRepository implements FilmRepository {
     @Override
     public List<Film> getPopularFilms(int count, Integer genreId, Integer year) {
         StringBuilder filmQuery = new StringBuilder("""
-            SELECT f.film_id AS id, f.name, f.description, f.release_date, f.duration,
-                   m.mpa_id, m.name AS mpa_name,
-                   COUNT(l.user_id) AS likes_count
-            FROM FILMS f
-            LEFT JOIN MPA m ON f.mpa_id = m.mpa_id
-            LEFT JOIN LIKES l ON f.film_id = l.film_id
-        """);
+                    SELECT f.film_id AS id, f.name, f.description, f.release_date, f.duration,
+                           m.mpa_id, m.name AS mpa_name,
+                           COUNT(l.user_id) AS likes_count
+                    FROM FILMS f
+                    LEFT JOIN MPA m ON f.mpa_id = m.mpa_id
+                    LEFT JOIN LIKES l ON f.film_id = l.film_id
+                """);
 
         MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue("count", count);
@@ -338,10 +338,10 @@ public class JdbcFilmRepository implements FilmRepository {
         }
 
         filmQuery.append("""
-            GROUP BY f.film_id, m.mpa_id, m.name
-            ORDER BY likes_count DESC
-            LIMIT :count
-        """);
+                    GROUP BY f.film_id, m.mpa_id, m.name
+                    ORDER BY likes_count DESC
+                    LIMIT :count
+                """);
 
         Map<Integer, Film> filmMap = new LinkedHashMap<>();
 
@@ -364,11 +364,11 @@ public class JdbcFilmRepository implements FilmRepository {
         // Загружаем жанры для найденных фильмов
         if (!filmMap.isEmpty()) {
             String genreQuery = """
-                SELECT fg.film_id, g.genre_id, g.genre_name
-                FROM FILM_GENRES fg
-                JOIN GENRES g ON fg.genre_id = g.genre_id
-                WHERE fg.film_id IN (:filmIds)
-                """;
+                    SELECT fg.film_id, g.genre_id, g.genre_name
+                    FROM FILM_GENRES fg
+                    JOIN GENRES g ON fg.genre_id = g.genre_id
+                    WHERE fg.film_id IN (:filmIds)
+                    """;
 
             List<Integer> filmIds = new ArrayList<>(filmMap.keySet());
             MapSqlParameterSource genreParams = new MapSqlParameterSource();
@@ -396,12 +396,12 @@ public class JdbcFilmRepository implements FilmRepository {
         }
 
         String filmQuery = """
-            SELECT f.film_id, f.name, f.description, f.release_date, f.duration,
-                   m.mpa_id, m.name AS mpa_name
-            FROM FILMS f
-            LEFT JOIN MPA m ON f.mpa_id = m.mpa_id
-            WHERE f.film_id IN (:filmIds)
-            """;
+                SELECT f.film_id, f.name, f.description, f.release_date, f.duration,
+                       m.mpa_id, m.name AS mpa_name
+                FROM FILMS f
+                LEFT JOIN MPA m ON f.mpa_id = m.mpa_id
+                WHERE f.film_id IN (:filmIds)
+                """;
 
         MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue("filmIds", filmIds);
@@ -427,11 +427,11 @@ public class JdbcFilmRepository implements FilmRepository {
         // Загружаем жанры для найденных фильмов
         if (!filmMap.isEmpty()) {
             String genreQuery = """
-                SELECT fg.film_id, g.genre_id, g.genre_name
-                FROM FILM_GENRES fg
-                JOIN GENRES g ON fg.genre_id = g.genre_id
-                WHERE fg.film_id IN (:filmIds)
-                """;
+                    SELECT fg.film_id, g.genre_id, g.genre_name
+                    FROM FILM_GENRES fg
+                    JOIN GENRES g ON fg.genre_id = g.genre_id
+                    WHERE fg.film_id IN (:filmIds)
+                    """;
 
             MapSqlParameterSource genreParams = new MapSqlParameterSource();
             genreParams.addValue("filmIds", filmIds);
