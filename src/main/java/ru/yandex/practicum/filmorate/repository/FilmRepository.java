@@ -22,7 +22,8 @@ public interface FilmRepository {
 
     void deleteLike(int id, int userId);
 
-    List<Film> getPopularFilms(int count);
-
     List<Film> getFilmsByIds(List<Integer> filmIds);
+
+    List<Film> getPopularFilms(int count, Integer genreId, Integer year);
+
 }

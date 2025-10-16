@@ -244,21 +244,37 @@ public class JdbcFilmRepository implements FilmRepository {
     }
 
     @Override
-    public List<Film> getPopularFilms(int count) {
+    public List<Film> getPopularFilms(int count, Integer genreId, Integer year) {
+        StringBuilder filmQuery = new StringBuilder("""
+                    SELECT f.film_id AS id, f.name, f.description, f.release_date, f.duration,
+                           COUNT(l.user_id) AS likes_count
+                    FROM FILMS f
+                    LEFT JOIN LIKES l ON f.film_id = l.film_id
+                """);
 
-        String filmQuery = """
-                SELECT f.film_id AS id, f.name, f.description, f.release_date, f.duration,
-                       COUNT(l.user_id) AS likes_count
-                FROM FILMS f
-                LEFT JOIN LIKES l ON f.film_id = l.film_id
-                GROUP BY f.film_id
-                ORDER BY likes_count DESC
-                LIMIT :count
-                """;
+        MapSqlParameterSource params = new MapSqlParameterSource();
+        params.addValue("count", count);
+
+        // Добавляем условия фильтрации
+        if (genreId != null) {
+            filmQuery.append(" JOIN FILM_GENRES fg ON f.film_id = fg.film_id AND fg.genre_id = :genreId ");
+            params.addValue("genreId", genreId);
+        }
+
+        if (year != null) {
+            filmQuery.append(" WHERE EXTRACT(YEAR FROM f.release_date) = :year ");
+            params.addValue("year", year);
+        }
+
+        filmQuery.append("""
+                    GROUP BY f.film_id
+                    ORDER BY likes_count DESC
+                    LIMIT :count
+                """);
 
         List<Film> films = new ArrayList<>();
 
-        jdbc.query(filmQuery, Map.of("count", count), rs -> {
+        jdbc.query(filmQuery.toString(), params, rs -> {
             Film film = new Film(
                     rs.getInt("id"),
                     rs.getString("name"),
@@ -273,6 +289,7 @@ public class JdbcFilmRepository implements FilmRepository {
 
         return films;
     }
+
     @Override
     public List<Film> getFilmsByIds(List<Integer> filmIds) {
         if (filmIds.isEmpty()) {
@@ -339,3 +356,6 @@ public class JdbcFilmRepository implements FilmRepository {
                 .collect(Collectors.toList());
     }
 }
+
+}
+
