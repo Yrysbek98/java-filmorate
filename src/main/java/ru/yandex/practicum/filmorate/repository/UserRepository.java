@@ -25,6 +25,8 @@ public interface UserRepository {
 
     List<User> getFriends(int idOfUser);
 
+    // Новые методы для рекомендаций
     Map<Integer, Set<Integer>> getAllUsersLikes();
+
     List<Integer> getLikedFilmsByUser(int userId);
 }
