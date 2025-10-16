@@ -1,6 +1,5 @@
 package ru.yandex.practicum.filmorate.repository;
 
-
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
@@ -10,7 +9,6 @@ import ru.yandex.practicum.filmorate.exception.FilmNotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.MPA;
-
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -30,30 +28,60 @@ public class JdbcFilmRepository implements FilmRepository {
     @Override
     public Optional<Film> getFilmById(int id) {
         String query = """
-                SELECT f.film_id, f.name, f.description, f.release_date, f.duration
+                SELECT f.film_id, f.name, f.description, f.release_date, f.duration,
+                       m.mpa_id, m.name AS mpa_name
                 FROM FILMS f
+                LEFT JOIN MPA m ON f.mpa_id = m.mpa_id
                 WHERE f.film_id = :id
                 """;
 
-        List<Film> films = jdbc.query(query, Map.of("id", id), (rs, rowNum) -> new Film(
-                rs.getInt("film_id"),
-                rs.getString("name"),
-                rs.getString("description"),
-                rs.getDate("release_date").toLocalDate(),
-                rs.getInt("duration")
-        ));
+        Map<String, Object> params = Map.of("id", id);
 
-        return films.stream().findFirst();
+        try {
+            Film film = jdbc.queryForObject(query, params, (rs, rowNum) ->
+                    new Film(
+                            rs.getInt("film_id"),
+                            rs.getString("name"),
+                            rs.getString("description"),
+                            rs.getDate("release_date").toLocalDate(),
+                            rs.getInt("duration"),
+                            rs.getObject("mpa_id") != null
+                                    ? new MPA(rs.getInt("mpa_id"), rs.getString("mpa_name"))
+                                    : null,
+                            new ArrayList<>()
+                    )
+            );
+
+            if (film != null) {
+                // Загружаем жанры для фильма
+                String genreQuery = """
+                        SELECT DISTINCT g.genre_id, g.genre_name
+                        FROM GENRES g
+                        JOIN FILM_GENRES fg ON g.genre_id = fg.genre_id
+                        WHERE fg.film_id = :filmId
+                        """;
+
+                List<Genre> genres = jdbc.query(genreQuery, Map.of("filmId", id), (rs2, rowNum2) ->
+                        new Genre(rs2.getInt("genre_id"), rs2.getString("genre_name"))
+                );
+
+                film.setGenres(genres != null ? genres : new ArrayList<>());
+            }
+
+            return Optional.ofNullable(film);
+        } catch (Exception e) {
+            return Optional.empty();
+        }
     }
 
     @Override
     public Film getFilmByIdWithGenre(int id) {
         String filmQuery = """
-                    SELECT f.film_id, f.name, f.description, f.release_date, f.duration,
-                           m.mpa_id, m.name AS mpa_name
-                    FROM FILMS f
-                    LEFT JOIN MPA m ON f.mpa_id = m.mpa_id
-                    WHERE f.film_id = :id
+                SELECT f.film_id, f.name, f.description, f.release_date, f.duration,
+                       m.mpa_id, m.name AS mpa_name
+                FROM FILMS f
+                LEFT JOIN MPA m ON f.mpa_id = m.mpa_id
+                WHERE f.film_id = :id
                 """;
 
         Map<String, Object> params = Map.of("id", id);
@@ -77,10 +105,10 @@ public class JdbcFilmRepository implements FilmRepository {
         }
 
         String genreQuery = """
-                    SELECT DISTINCT g.genre_id, g.genre_name
-                    FROM GENRES g
-                    JOIN FILM_GENRES fg ON g.genre_id = fg.genre_id
-                    WHERE fg.film_id = :filmId
+                SELECT DISTINCT g.genre_id, g.genre_name
+                FROM GENRES g
+                JOIN FILM_GENRES fg ON g.genre_id = fg.genre_id
+                WHERE fg.film_id = :filmId
                 """;
 
         List<Genre> genres = jdbc.query(genreQuery, Map.of("filmId", id), (rs, rowNum) ->
@@ -95,8 +123,10 @@ public class JdbcFilmRepository implements FilmRepository {
     @Override
     public List<Film> findAllFilms() {
         String filmQuery = """
-                SELECT f.film_id AS id, f.name, f.description, f.release_date, f.duration
+                SELECT f.film_id AS id, f.name, f.description, f.release_date, f.duration,
+                       m.mpa_id, m.name AS mpa_name
                 FROM FILMS f
+                LEFT JOIN MPA m ON f.mpa_id = m.mpa_id
                 """;
 
         Map<Integer, Film> filmMap = new LinkedHashMap<>();
@@ -109,11 +139,38 @@ public class JdbcFilmRepository implements FilmRepository {
                     rs.getString("description"),
                     rs.getDate("release_date").toLocalDate(),
                     rs.getInt("duration"),
-                    null,
+                    rs.getObject("mpa_id") != null
+                            ? new MPA(rs.getInt("mpa_id"), rs.getString("mpa_name"))
+                            : null,
                     new ArrayList<>()
             );
             filmMap.put(filmId, film);
         });
+
+        // Загружаем жанры для всех фильмов
+        if (!filmMap.isEmpty()) {
+            String genreQuery = """
+                    SELECT fg.film_id, g.genre_id, g.genre_name
+                    FROM FILM_GENRES fg
+                    JOIN GENRES g ON fg.genre_id = g.genre_id
+                    WHERE fg.film_id IN (:filmIds)
+                    """;
+
+            List<Integer> filmIds = new ArrayList<>(filmMap.keySet());
+            MapSqlParameterSource genreParams = new MapSqlParameterSource();
+            genreParams.addValue("filmIds", filmIds);
+
+            jdbc.query(genreQuery, genreParams, rs -> {
+                int filmId = rs.getInt("film_id");
+                Film film = filmMap.get(filmId);
+                if (film != null) {
+                    film.getGenres().add(new Genre(
+                            rs.getInt("genre_id"),
+                            rs.getString("genre_name")
+                    ));
+                }
+            });
+        }
 
         return new ArrayList<>(filmMap.values());
     }
@@ -128,14 +185,13 @@ public class JdbcFilmRepository implements FilmRepository {
 
         GeneratedKeyHolder keyHolder = new GeneratedKeyHolder();
         String insertFilmQuery = """
-                    INSERT INTO FILMS(name, description, release_date, duration)
-                    VALUES(:name, :description, :release_date, :duration)
+                INSERT INTO FILMS(name, description, release_date, duration)
+                VALUES(:name, :description, :release_date, :duration)
                 """;
 
         jdbc.update(insertFilmQuery, params, keyHolder, new String[]{"film_id"});
         int filmId = keyHolder.getKeyAs(Integer.class);
         film.setId(filmId);
-
 
         if (film.getMpa() != null && film.getMpa().getId() != 0) {
             String updateMpaQuery = "UPDATE FILMS SET mpa_id = :mpaId WHERE film_id = :filmId";
@@ -147,9 +203,9 @@ public class JdbcFilmRepository implements FilmRepository {
 
         if (film.getGenres() != null && !film.getGenres().isEmpty()) {
             List<Genre> uniqueGenres = film.getGenres().stream()
-                    .filter(g -> g != null)
+                    .filter(Objects::nonNull)
                     .distinct()
-                    .toList();
+                    .collect(Collectors.toList());
 
             for (Genre genre : uniqueGenres) {
                 String insertGenreQuery = """
@@ -167,7 +223,6 @@ public class JdbcFilmRepository implements FilmRepository {
         }
 
         return film;
-
     }
 
     @Override
@@ -180,37 +235,48 @@ public class JdbcFilmRepository implements FilmRepository {
         params.addValue("duration", film.getDuration());
 
         String updateFilmQuery = """
-                    UPDATE FILMS
-                    SET name = :name,
-                        description = :description,
-                        release_date = :release_date,
-                        duration = :duration
-                    WHERE film_id = :id
+                UPDATE FILMS
+                SET name = :name,
+                    description = :description,
+                    release_date = :release_date,
+                    duration = :duration
+                WHERE film_id = :id
                 """;
 
         jdbc.update(updateFilmQuery, params);
 
+        // Обновляем MPA рейтинг если он есть
+        if (film.getMpa() != null && film.getMpa().getId() != 0) {
+            String updateMpaQuery = "UPDATE FILMS SET mpa_id = :mpaId WHERE film_id = :filmId";
+            MapSqlParameterSource mpaParams = new MapSqlParameterSource();
+            mpaParams.addValue("mpaId", film.getMpa().getId());
+            mpaParams.addValue("filmId", film.getId());
+            jdbc.update(updateMpaQuery, mpaParams);
+        }
+
+        // Обновляем жанры
         jdbc.update("DELETE FROM FILM_GENRES WHERE film_id = :filmId",
                 Map.of("filmId", film.getId()));
 
         if (film.getGenres() != null && !film.getGenres().isEmpty()) {
             String insertGenreQuery = """
-                        INSERT INTO FILM_GENRES(film_id, genre_id)
-                        VALUES(:filmId, :genreId)
+                    INSERT INTO FILM_GENRES(film_id, genre_id)
+                    VALUES(:filmId, :genreId)
                     """;
 
             List<Map<String, Object>> batchParams = film.getGenres().stream()
+                    .filter(Objects::nonNull)
+                    .distinct()
                     .map(genre -> Map.<String, Object>of(
                             "filmId", film.getId(),
-                            "genreId", genreRepository.findGenreIdByName(genre.getName())
+                            "genreId", genre.getId()
                     ))
-                    .toList();
+                    .collect(Collectors.toList());
 
             jdbc.batchUpdate(insertGenreQuery, batchParams.toArray(new Map[0]));
         }
 
         return getFilmById(film.getId());
-
     }
 
     @Override
@@ -244,35 +310,82 @@ public class JdbcFilmRepository implements FilmRepository {
     }
 
     @Override
-    public List<Film> getPopularFilms(int count) {
+    public List<Film> getPopularFilms(int count, Integer genreId, Integer year) {
+        StringBuilder filmQuery = new StringBuilder("""
+            SELECT f.film_id AS id, f.name, f.description, f.release_date, f.duration,
+                   m.mpa_id, m.name AS mpa_name,
+                   COUNT(l.user_id) AS likes_count
+            FROM FILMS f
+            LEFT JOIN MPA m ON f.mpa_id = m.mpa_id
+            LEFT JOIN LIKES l ON f.film_id = l.film_id
+        """);
 
-        String filmQuery = """
-                SELECT f.film_id AS id, f.name, f.description, f.release_date, f.duration,
-                       COUNT(l.user_id) AS likes_count
-                FROM FILMS f
-                LEFT JOIN LIKES l ON f.film_id = l.film_id
-                GROUP BY f.film_id
-                ORDER BY likes_count DESC
-                LIMIT :count
-                """;
+        MapSqlParameterSource params = new MapSqlParameterSource();
+        params.addValue("count", count);
 
-        List<Film> films = new ArrayList<>();
+        // Добавляем условия фильтрации
+        if (genreId != null) {
+            filmQuery.append(" JOIN FILM_GENRES fg ON f.film_id = fg.film_id AND fg.genre_id = :genreId ");
+            params.addValue("genreId", genreId);
+        }
 
-        jdbc.query(filmQuery, Map.of("count", count), rs -> {
+        if (year != null) {
+            filmQuery.append(" WHERE EXTRACT(YEAR FROM f.release_date) = :year ");
+            params.addValue("year", year);
+        }
+
+        filmQuery.append("""
+            GROUP BY f.film_id, m.mpa_id, m.name
+            ORDER BY likes_count DESC
+            LIMIT :count
+        """);
+
+        Map<Integer, Film> filmMap = new LinkedHashMap<>();
+
+        jdbc.query(filmQuery.toString(), params, rs -> {
+            int filmId = rs.getInt("id");
             Film film = new Film(
-                    rs.getInt("id"),
+                    filmId,
                     rs.getString("name"),
                     rs.getString("description"),
                     rs.getDate("release_date").toLocalDate(),
                     rs.getInt("duration"),
-                    null,
+                    rs.getObject("mpa_id") != null
+                            ? new MPA(rs.getInt("mpa_id"), rs.getString("mpa_name"))
+                            : null,
                     new ArrayList<>()
             );
-            films.add(film);
+            filmMap.put(filmId, film);
         });
 
-        return films;
+        // Загружаем жанры для найденных фильмов
+        if (!filmMap.isEmpty()) {
+            String genreQuery = """
+                SELECT fg.film_id, g.genre_id, g.genre_name
+                FROM FILM_GENRES fg
+                JOIN GENRES g ON fg.genre_id = g.genre_id
+                WHERE fg.film_id IN (:filmIds)
+                """;
+
+            List<Integer> filmIds = new ArrayList<>(filmMap.keySet());
+            MapSqlParameterSource genreParams = new MapSqlParameterSource();
+            genreParams.addValue("filmIds", filmIds);
+
+            jdbc.query(genreQuery, genreParams, rs -> {
+                int filmId = rs.getInt("film_id");
+                Film film = filmMap.get(filmId);
+                if (film != null) {
+                    film.getGenres().add(new Genre(
+                            rs.getInt("genre_id"),
+                            rs.getString("genre_name")
+                    ));
+                }
+            });
+        }
+
+        return new ArrayList<>(filmMap.values());
     }
+
     @Override
     public List<Film> getFilmsByIds(List<Integer> filmIds) {
         if (filmIds.isEmpty()) {
@@ -280,12 +393,12 @@ public class JdbcFilmRepository implements FilmRepository {
         }
 
         String filmQuery = """
-        SELECT f.film_id, f.name, f.description, f.release_date, f.duration,
-               m.mpa_id, m.name AS mpa_name
-        FROM FILMS f
-        LEFT JOIN MPA m ON f.mpa_id = m.mpa_id
-        WHERE f.film_id IN (:filmIds)
-    """;
+            SELECT f.film_id, f.name, f.description, f.release_date, f.duration,
+                   m.mpa_id, m.name AS mpa_name
+            FROM FILMS f
+            LEFT JOIN MPA m ON f.mpa_id = m.mpa_id
+            WHERE f.film_id IN (:filmIds)
+            """;
 
         MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue("filmIds", filmIds);
@@ -311,11 +424,11 @@ public class JdbcFilmRepository implements FilmRepository {
         // Загружаем жанры для найденных фильмов
         if (!filmMap.isEmpty()) {
             String genreQuery = """
-            SELECT fg.film_id, g.genre_id, g.genre_name
-            FROM FILM_GENRES fg
-            JOIN GENRES g ON fg.genre_id = g.genre_id
-            WHERE fg.film_id IN (:filmIds)
-        """;
+                SELECT fg.film_id, g.genre_id, g.genre_name
+                FROM FILM_GENRES fg
+                JOIN GENRES g ON fg.genre_id = g.genre_id
+                WHERE fg.film_id IN (:filmIds)
+                """;
 
             MapSqlParameterSource genreParams = new MapSqlParameterSource();
             genreParams.addValue("filmIds", filmIds);

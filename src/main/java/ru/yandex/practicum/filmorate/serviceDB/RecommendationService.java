@@ -19,13 +19,11 @@ public class RecommendationService {
     private final FilmRepository filmRepository;
 
     public List<Film> getRecommendations(int userId) {
-        // Получаем все лайки пользователей
+
         Map<Integer, Set<Integer>> allUsersLikes = userRepository.getAllUsersLikes();
 
-        // Получаем лайки текущего пользователя
         Set<Integer> currentUserLikes = new HashSet<>(userRepository.getLikedFilmsByUser(userId));
 
-        // Находим наиболее похожего пользователя
         Integer mostSimilarUserId = findMostSimilarUser(userId, allUsersLikes, currentUserLikes);
 
         if (mostSimilarUserId == null) {
@@ -33,7 +31,6 @@ public class RecommendationService {
             return new ArrayList<>();
         }
 
-        // Получаем фильмы похожего пользователя, которые текущий пользователь не лайкал
         Set<Integer> similarUserLikes = allUsersLikes.get(mostSimilarUserId);
         Set<Integer> recommendations = new HashSet<>(similarUserLikes);
         recommendations.removeAll(currentUserLikes);
@@ -41,7 +38,6 @@ public class RecommendationService {
         log.info("Для пользователя {} найдено {} рекомендаций от пользователя {}",
                 userId, recommendations.size(), mostSimilarUserId);
 
-        // Возвращаем фильмы с полной информацией
         return filmRepository.getFilmsByIds(new ArrayList<>(recommendations));
     }
 
@@ -53,14 +49,12 @@ public class RecommendationService {
         for (Map.Entry<Integer, Set<Integer>> entry : allUsersLikes.entrySet()) {
             int otherUserId = entry.getKey();
 
-            // Пропускаем текущего пользователя
             if (otherUserId == userId) {
                 continue;
             }
 
             Set<Integer> otherUserLikes = entry.getValue();
-
-            // Вычисляем коэффициент схожести (Jaccard similarity)
+            
             double similarity = calculateSimilarity(currentUserLikes, otherUserLikes);
 
             if (similarity > maxSimilarity) {
@@ -69,7 +63,6 @@ public class RecommendationService {
             }
         }
 
-        // Исправлено: было mostSimilarity, должно быть maxSimilarity
         return maxSimilarity > 0 ? mostSimilarUserId : null;
     }
 
@@ -83,7 +76,6 @@ public class RecommendationService {
 
         Set<Integer> union = new HashSet<>(user1Likes);
         union.addAll(user2Likes);
-
 
         return (double) intersection.size() / union.size();
     }

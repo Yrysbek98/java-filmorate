@@ -13,10 +13,8 @@ import ru.yandex.practicum.filmorate.repository.FilmRepository;
 import ru.yandex.practicum.filmorate.repository.GenreRepository;
 import ru.yandex.practicum.filmorate.repository.MpaRepository;
 
-
 import java.util.List;
 import java.util.Optional;
-
 
 @Service
 @RequiredArgsConstructor
@@ -106,11 +104,17 @@ public class BasedFilmService implements FilmServiceDB {
     }
 
     @Override
-    public List<Film> getPopularFilms(int count) {
+    public List<Film> getPopularFilms(int count, Integer genreId, Integer year) {
         if (count <= 0) {
             throw new FilmValidationException("Количество фильмов должно быть положительным числом");
         }
 
-        return filmRepository.getPopularFilms(count);
+        // Валидация genreId
+        if (genreId != null) {
+            genreRepository.getGenreById(genreId)
+                    .orElseThrow(() -> new GenreNotFoundException("Жанр с id=" + genreId + " не найден"));
+        }
+
+        return filmRepository.getPopularFilms(count, genreId, year);
     }
 }

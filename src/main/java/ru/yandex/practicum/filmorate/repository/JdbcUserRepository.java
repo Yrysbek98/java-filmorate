@@ -171,6 +171,7 @@ public class JdbcUserRepository implements UserRepository {
                 rs.getDate("birthday").toLocalDate()
         ));
     }
+
     @Override
     public Map<Integer, Set<Integer>> getAllUsersLikes() {
         String query = "SELECT user_id, film_id FROM LIKES";
@@ -195,5 +196,4 @@ public class JdbcUserRepository implements UserRepository {
                 rs.getInt("film_id")
         );
     }
-
 }

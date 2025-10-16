@@ -5,7 +5,6 @@ import ru.yandex.practicum.filmorate.model.Film;
 import java.util.List;
 import java.util.Optional;
 
-
 public interface FilmRepository {
 
     Optional<Film> getFilmById(int id);
@@ -22,7 +21,7 @@ public interface FilmRepository {
 
     void deleteLike(int id, int userId);
 
-    List<Film> getPopularFilms(int count);
+    List<Film> getPopularFilms(int count, Integer genreId, Integer year);
 
     List<Film> getFilmsByIds(List<Integer> filmIds);
 }

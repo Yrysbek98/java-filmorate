@@ -16,7 +16,7 @@ import java.util.Optional;
 public class BasedUserService implements UserServiceDB {
 
     private final UserRepository userRepository;
-    private final RecommendationService recommendationService; // Добавлено
+    private final RecommendationService recommendationService;
 
     @Override
     public Optional<User> getUserById(int id) {

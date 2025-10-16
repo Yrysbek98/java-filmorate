@@ -10,10 +10,8 @@ import ru.yandex.practicum.filmorate.exception.*;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.serviceDB.FilmServiceDB;
 
-
 import java.util.List;
 import java.util.Optional;
-
 
 @Slf4j
 @RestController
@@ -28,8 +26,7 @@ public class FilmController {
     }
 
     @GetMapping("/{id}")
-    public Film getFilmByIdWithGenre(
-            @PathVariable int id) {
+    public Film getFilmByIdWithGenre(@PathVariable int id) {
         return filmServiceDB.getFilmByIdWithGenre(id);
     }
 
@@ -44,25 +41,21 @@ public class FilmController {
     }
 
     @PutMapping("/{id}/like/{userId}")
-    public void addLike(
-            @PathVariable int id,
-            @PathVariable int userId
-    ) {
+    public void addLike(@PathVariable int id, @PathVariable int userId) {
         filmServiceDB.addLike(id, userId);
     }
 
     @DeleteMapping("/{id}/like/{userId}")
-    public void deleteLike(
-            @PathVariable int id,
-            @PathVariable int userId
-    ) {
+    public void deleteLike(@PathVariable int id, @PathVariable int userId) {
         filmServiceDB.deleteLike(id, userId);
     }
 
     @GetMapping("/popular")
     public List<Film> getPopularFilms(
-            @RequestParam(defaultValue = "10") int count) {
-        return filmServiceDB.getPopularFilms(count);
+            @RequestParam(defaultValue = "10") int count,
+            @RequestParam(required = false) Integer genreId,
+            @RequestParam(required = false) Integer year) {
+        return filmServiceDB.getPopularFilms(count, genreId, year);
     }
 
     @ExceptionHandler
@@ -82,5 +75,4 @@ public class FilmController {
         ErrorResponse errorResponse = ex.toResponse();
         return new ResponseEntity<>(errorResponse, errorResponse.httpStatusCode());
     }
-
 }

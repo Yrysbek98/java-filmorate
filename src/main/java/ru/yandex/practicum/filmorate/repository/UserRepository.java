@@ -26,8 +26,6 @@ public interface UserRepository {
     List<User> getFriends(int idOfUser);
 
     Map<Integer, Set<Integer>> getAllUsersLikes();
-
+    
     List<Integer> getLikedFilmsByUser(int userId);
 }
-
-
