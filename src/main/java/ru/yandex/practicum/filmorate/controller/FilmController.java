@@ -64,7 +64,7 @@ public class FilmController {
             @RequestParam(defaultValue = "10") int count,
             @RequestParam(required = false) Integer genreId,
             @RequestParam(required = false) Integer year) {
-        return filmServiceDB.getPopularFilms(count, genreId , year);
+        return filmServiceDB.getPopularFilms(count, genreId, year);
     }
 
     @ExceptionHandler
