@@ -13,6 +13,7 @@ import ru.yandex.practicum.filmorate.model.MPA;
 
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Repository
@@ -271,5 +272,70 @@ public class JdbcFilmRepository implements FilmRepository {
         });
 
         return films;
+    }
+    @Override
+    public List<Film> getFilmsByIds(List<Integer> filmIds) {
+        if (filmIds.isEmpty()) {
+            return new ArrayList<>();
+        }
+
+        String filmQuery = """
+        SELECT f.film_id, f.name, f.description, f.release_date, f.duration,
+               m.mpa_id, m.name AS mpa_name
+        FROM FILMS f
+        LEFT JOIN MPA m ON f.mpa_id = m.mpa_id
+        WHERE f.film_id IN (:filmIds)
+    """;
+
+        MapSqlParameterSource params = new MapSqlParameterSource();
+        params.addValue("filmIds", filmIds);
+
+        Map<Integer, Film> filmMap = new HashMap<>();
+
+        jdbc.query(filmQuery, params, rs -> {
+            int filmId = rs.getInt("film_id");
+            Film film = new Film(
+                    filmId,
+                    rs.getString("name"),
+                    rs.getString("description"),
+                    rs.getDate("release_date").toLocalDate(),
+                    rs.getInt("duration"),
+                    rs.getObject("mpa_id") != null
+                            ? new MPA(rs.getInt("mpa_id"), rs.getString("mpa_name"))
+                            : null,
+                    new ArrayList<>()
+            );
+            filmMap.put(filmId, film);
+        });
+
+        // Загружаем жанры для найденных фильмов
+        if (!filmMap.isEmpty()) {
+            String genreQuery = """
+            SELECT fg.film_id, g.genre_id, g.genre_name
+            FROM FILM_GENRES fg
+            JOIN GENRES g ON fg.genre_id = g.genre_id
+            WHERE fg.film_id IN (:filmIds)
+        """;
+
+            MapSqlParameterSource genreParams = new MapSqlParameterSource();
+            genreParams.addValue("filmIds", filmIds);
+
+            jdbc.query(genreQuery, genreParams, rs -> {
+                int filmId = rs.getInt("film_id");
+                Film film = filmMap.get(filmId);
+                if (film != null) {
+                    film.getGenres().add(new Genre(
+                            rs.getInt("genre_id"),
+                            rs.getString("genre_name")
+                    ));
+                }
+            });
+        }
+
+        // Сохраняем порядок из входного списка
+        return filmIds.stream()
+                .map(filmMap::get)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
     }
 }

@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.UserNotFoundException;
 import ru.yandex.practicum.filmorate.exception.UserValidationException;
+import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.repository.UserRepository;
 
@@ -14,7 +15,8 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class BasedUserService implements UserServiceDB {
 
-    final UserRepository userRepository;
+    private final UserRepository userRepository;
+    private final RecommendationService recommendationService; // Добавлено
 
     @Override
     public Optional<User> getUserById(int id) {
@@ -85,5 +87,17 @@ public class BasedUserService implements UserServiceDB {
         final User u = userRepository.getUserById(idOfUser)
                 .orElseThrow(() -> new UserNotFoundException("Пользователь с таким " + idOfUser + " не найден"));
         return userRepository.getFriends(u.getId());
+    }
+
+    @Override
+    public List<Film> getRecommendations(int userId) {
+        if (userId < 1) {
+            throw new UserValidationException("Некорректный id пользователя");
+        }
+
+        // Проверяем существование пользователя
+        getUserById(userId);
+
+        return recommendationService.getRecommendations(userId);
     }
 }

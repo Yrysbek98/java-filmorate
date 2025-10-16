@@ -10,6 +10,7 @@ import ru.yandex.practicum.filmorate.dto.ErrorResponse;
 import ru.yandex.practicum.filmorate.exception.AbstractDtoException;
 import ru.yandex.practicum.filmorate.exception.UserNotFoundException;
 import ru.yandex.practicum.filmorate.exception.UserValidationException;
+import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.serviceDB.UserServiceDB;
 
@@ -87,6 +88,9 @@ public class UserController {
         ErrorResponse errorResponse = exception.toResponse();
         return new ResponseEntity<>(errorResponse, errorResponse.httpStatusCode());
     }
-
+    @GetMapping("/{id}/recommendations")
+    public List<Film> getRecommendations(@PathVariable int id) {
+        return userServiceDB.getRecommendations(id);
+    }
 
 }

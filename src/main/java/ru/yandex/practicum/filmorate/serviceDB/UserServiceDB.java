@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.serviceDB;
 
+import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
 
 import java.util.List;
@@ -22,4 +23,6 @@ public interface UserServiceDB {
     List<User> getSameFriends(int idOfUser, int idOfFriend);
 
     List<User> getFriends(int idOfUser);
+
+    List<Film> getRecommendations(int userId);
 }

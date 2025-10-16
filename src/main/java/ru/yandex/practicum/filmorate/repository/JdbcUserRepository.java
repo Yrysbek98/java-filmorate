@@ -171,6 +171,29 @@ public class JdbcUserRepository implements UserRepository {
                 rs.getDate("birthday").toLocalDate()
         ));
     }
+    @Override
+    public Map<Integer, Set<Integer>> getAllUsersLikes() {
+        String query = "SELECT user_id, film_id FROM LIKES";
 
+        Map<Integer, Set<Integer>> userLikes = new HashMap<>();
+
+        jdbc.query(query, rs -> {
+            int userId = rs.getInt("user_id");
+            int filmId = rs.getInt("film_id");
+
+            userLikes.computeIfAbsent(userId, k -> new HashSet<>()).add(filmId);
+        });
+
+        return userLikes;
+    }
+
+    @Override
+    public List<Integer> getLikedFilmsByUser(int userId) {
+        String query = "SELECT film_id FROM LIKES WHERE user_id = :userId";
+
+        return jdbc.query(query, Map.of("userId", userId), (rs, rowNum) ->
+                rs.getInt("film_id")
+        );
+    }
 
 }
