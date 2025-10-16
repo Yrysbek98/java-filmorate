@@ -88,6 +88,7 @@ public class UserController {
         ErrorResponse errorResponse = exception.toResponse();
         return new ResponseEntity<>(errorResponse, errorResponse.httpStatusCode());
     }
+
     @GetMapping("/{id}/recommendations")
     public List<Film> getRecommendations(@PathVariable int id) {
         return userServiceDB.getRecommendations(id);
