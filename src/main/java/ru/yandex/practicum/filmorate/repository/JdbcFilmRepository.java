@@ -297,12 +297,12 @@ public class JdbcFilmRepository implements FilmRepository {
         }
 
         String filmQuery = """
-        SELECT f.film_id, f.name, f.description, f.release_date, f.duration,
-               m.mpa_id, m.name AS mpa_name
-        FROM FILMS f
-        LEFT JOIN MPA m ON f.mpa_id = m.mpa_id
-        WHERE f.film_id IN (:filmIds)
-    """;
+                    SELECT f.film_id, f.name, f.description, f.release_date, f.duration,
+                           m.mpa_id, m.name AS mpa_name
+                    FROM FILMS f
+                    LEFT JOIN MPA m ON f.mpa_id = m.mpa_id
+                    WHERE f.film_id IN (:filmIds)
+                """;
 
         MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue("filmIds", filmIds);
@@ -328,11 +328,11 @@ public class JdbcFilmRepository implements FilmRepository {
         // Загружаем жанры для найденных фильмов
         if (!filmMap.isEmpty()) {
             String genreQuery = """
-            SELECT fg.film_id, g.genre_id, g.genre_name
-            FROM FILM_GENRES fg
-            JOIN GENRES g ON fg.genre_id = g.genre_id
-            WHERE fg.film_id IN (:filmIds)
-        """;
+                        SELECT fg.film_id, g.genre_id, g.genre_name
+                        FROM FILM_GENRES fg
+                        JOIN GENRES g ON fg.genre_id = g.genre_id
+                        WHERE fg.film_id IN (:filmIds)
+                    """;
 
             MapSqlParameterSource genreParams = new MapSqlParameterSource();
             genreParams.addValue("filmIds", filmIds);
@@ -357,5 +357,4 @@ public class JdbcFilmRepository implements FilmRepository {
     }
 }
 
-}
 
