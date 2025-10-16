@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.repository;
 
+
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
@@ -9,6 +10,7 @@ import ru.yandex.practicum.filmorate.exception.FilmNotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.MPA;
+
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -223,6 +225,7 @@ public class JdbcFilmRepository implements FilmRepository {
         }
 
         return film;
+
     }
 
     @Override

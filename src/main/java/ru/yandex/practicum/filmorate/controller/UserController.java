@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 import ru.yandex.practicum.filmorate.dto.ErrorResponse;
 import ru.yandex.practicum.filmorate.exception.AbstractDtoException;
 import ru.yandex.practicum.filmorate.exception.UserNotFoundException;
@@ -13,8 +14,10 @@ import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.serviceDB.UserServiceDB;
 
+
 import java.util.List;
 import java.util.Optional;
+
 
 @Slf4j
 @RestController
@@ -22,6 +25,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class UserController {
     private final UserServiceDB userServiceDB;
+
 
     @GetMapping
     public List<User> findAll() {
@@ -39,29 +43,32 @@ public class UserController {
     }
 
     @PutMapping("/{id}/friends/{friendId}")
-    public void addFriend(@PathVariable int id, @PathVariable int friendId) {
+    public void addFriend(
+            @PathVariable int id,
+            @PathVariable int friendId
+    ) {
         userServiceDB.addFriend(id, friendId);
     }
 
     @DeleteMapping("/{id}/friends/{friendId}")
-    public void deleteFriend(@PathVariable int id, @PathVariable int friendId) {
+    public void deleteFriend(
+            @PathVariable int id,
+            @PathVariable int friendId
+    ) {
         userServiceDB.deleteFriend(id, friendId);
     }
 
     @GetMapping("/{id}/friends/common/{otherId}")
-    public List<User> getSameFriends(@PathVariable int id, @PathVariable int otherId) {
+    public List<User> getSameFriends(
+            @PathVariable int id,
+            @PathVariable int otherId
+    ) {
         return userServiceDB.getSameFriends(id, otherId);
     }
 
     @GetMapping("/{id}/friends")
     public List<User> getFriends(@PathVariable int id) {
         return userServiceDB.getFriends(id);
-    }
-
-    // Новый endpoint для рекомендаций
-    @GetMapping("/{id}/recommendations")
-    public List<Film> getRecommendations(@PathVariable int id) {
-        return userServiceDB.getRecommendations(id);
     }
 
     @ExceptionHandler(UserValidationException.class)
@@ -81,4 +88,9 @@ public class UserController {
         ErrorResponse errorResponse = exception.toResponse();
         return new ResponseEntity<>(errorResponse, errorResponse.httpStatusCode());
     }
+    @GetMapping("/{id}/recommendations")
+    public List<Film> getRecommendations(@PathVariable int id) {
+        return userServiceDB.getRecommendations(id);
+    }
+
 }
