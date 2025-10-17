@@ -7,11 +7,11 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class MPA {
+public class Mpa {
     private int id;
     private String name;
 
-    public MPA(String name) {
+    public Mpa(String name) {
         this.name = name;
     }
 
