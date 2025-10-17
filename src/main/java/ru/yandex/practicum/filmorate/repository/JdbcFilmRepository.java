@@ -505,14 +505,14 @@ public class JdbcFilmRepository implements FilmRepository {
         List<Integer> filmIds = films.stream().map(Film::getId).toList();
         Map<Integer, Set<Director>> directorsByFilmId = new HashMap<>();
 
-        String GET_DIRECTORS_QUERY = "SELECT d.id, d.name, fd.film_id " +
+        String query = "SELECT d.id, d.name, fd.film_id " +
                 "FROM directors AS d " +
                 "JOIN film_director AS fd ON d.id = fd.director_id " +
                 "WHERE fd.film_id IN (:filmIds)";
 
         SqlParameterSource params = new MapSqlParameterSource("filmIds", filmIds);
 
-        jdbc.query(GET_DIRECTORS_QUERY, params, (rs) -> {
+        jdbc.query(query, params, (rs) -> {
             Director director = new Director(rs.getInt("id"), rs.getString("name"));
             int filmId = rs.getInt("film_id");
             directorsByFilmId.computeIfAbsent(filmId, k -> new LinkedHashSet<>()).add(director);
