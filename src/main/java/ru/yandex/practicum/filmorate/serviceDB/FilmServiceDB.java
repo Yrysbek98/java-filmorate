@@ -17,6 +17,8 @@ public interface FilmServiceDB {
 
     Optional<Film> changeFilm(Film film);
 
+    void deleteFilm(int id);
+
     void addLike(int id, int userId);
 
     void deleteLike(int id, int userId);

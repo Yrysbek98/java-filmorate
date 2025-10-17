@@ -282,6 +282,19 @@ public class JdbcFilmRepository implements FilmRepository {
         return getFilmById(film.getId());
     }
 
+    // Удаление фильма по id: true - если удалили
+    @Override
+    public boolean deleteFilm(int id) {
+        jdbc.update("DELETE FROM LIKES WHERE FILM_ID = :id",
+                new MapSqlParameterSource("id", id));
+
+        jdbc.update("DELETE FROM FILM_GENRES WHERE FILM_ID = :id",
+                new MapSqlParameterSource("id", id));
+
+        return jdbc.update("DELETE FROM FILMS WHERE FILM_ID = :id",
+                new MapSqlParameterSource("id", id)) > 0;
+    }
+
     @Override
     public void addLike(int id, int userId) {
         String addLikeQuery = """

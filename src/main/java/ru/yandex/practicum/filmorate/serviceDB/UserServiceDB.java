@@ -16,6 +16,8 @@ public interface UserServiceDB {
 
     Optional<User> changeUser(User user);
 
+    void deleteUser(int id);
+
     void addFriend(int idOfUser, int idOfFriend);
 
     void deleteFriend(int idOfUser, int idOfFriend);

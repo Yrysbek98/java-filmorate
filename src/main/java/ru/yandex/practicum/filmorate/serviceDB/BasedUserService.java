@@ -50,6 +50,16 @@ public class BasedUserService implements UserServiceDB {
         return userRepository.changeUser(user);
     }
 
+    // Удаление пользователя по ID
+    @Override
+    public void deleteUser(int id) {
+        // Проверка существования пользователя
+        userRepository.getUserById(id)
+                .orElseThrow(() -> new UserNotFoundException("Пользователь с id = " + id + " не найден."));
+
+        userRepository.deleteUser(id);
+    }
+
     @Override
     public void addFriend(int idOfUser, int idOfFriend) {
         if (idOfUser == idOfFriend) {

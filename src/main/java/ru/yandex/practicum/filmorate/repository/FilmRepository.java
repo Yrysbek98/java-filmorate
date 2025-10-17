@@ -18,6 +18,8 @@ public interface FilmRepository {
 
     Optional<Film> changeFilm(Film film);
 
+    boolean deleteFilm(int id);
+
     void addLike(int id, int userId);
 
     void deleteLike(int id, int userId);

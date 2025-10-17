@@ -2,10 +2,7 @@ package ru.yandex.practicum.filmorate.serviceDB;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import ru.yandex.practicum.filmorate.exception.FilmNotFoundException;
-import ru.yandex.practicum.filmorate.exception.FilmValidationException;
-import ru.yandex.practicum.filmorate.exception.GenreNotFoundException;
-import ru.yandex.practicum.filmorate.exception.MpaNotFoundException;
+import ru.yandex.practicum.filmorate.exception.*;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.MPA;
@@ -73,6 +70,15 @@ public class BasedFilmService implements FilmServiceDB {
         }
 
         return filmRepository.changeFilm(film);
+    }
+
+    // Удаление фильма по ID
+    @Override
+    public void deleteFilm(int id) {
+        // Проверка существования фильма
+        this.getFilmById(id);
+
+        filmRepository.deleteFilm(id);
     }
 
     @Override
