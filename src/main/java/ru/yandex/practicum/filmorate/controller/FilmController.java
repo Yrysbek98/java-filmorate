@@ -72,4 +72,10 @@ public class FilmController {
         ErrorResponse errorResponse = ex.toResponse();
         return new ResponseEntity<>(errorResponse, errorResponse.httpStatusCode());
     }
+
+    @GetMapping("/search")
+    public List<Film> searchFilms(@RequestParam String query) {
+        log.info("Поиск фильмов по ключевому слову: {}", query);
+        return filmServiceDB.searchFilms(query);
+    }
 }

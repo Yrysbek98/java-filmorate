@@ -22,4 +22,6 @@ public interface FilmServiceDB {
     void deleteLike(int id, int userId);
 
     List<Film> getPopularFilms(int count, Integer genreId, Integer year);
+
+    List<Film> searchFilms(String query);
 }

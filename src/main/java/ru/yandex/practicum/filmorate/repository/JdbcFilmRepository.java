@@ -454,4 +454,63 @@ public class JdbcFilmRepository implements FilmRepository {
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
     }
+
+    @Override
+    public List<Film> searchFilms(String query) {
+        String sql = """
+            SELECT f.film_id, f.name, f.description, f.release_date, f.duration,
+                   m.mpa_id, m.name AS mpa_name
+            FROM FILMS f
+            LEFT JOIN MPA m ON f.mpa_id = m.mpa_id
+            WHERE LOWER(f.name) LIKE :pattern
+               OR LOWER(f.description) LIKE :pattern
+            ORDER BY f.name
+            """;
+
+        String pattern = "%" + query + "%";
+        MapSqlParameterSource params = new MapSqlParameterSource("pattern", pattern);
+
+        Map<Integer, Film> filmMap = new LinkedHashMap<>();
+
+        jdbc.query(sql, params, rs -> {
+            int filmId = rs.getInt("film_id");
+            Film film = new Film(
+                    filmId,
+                    rs.getString("name"),
+                    rs.getString("description"),
+                    rs.getDate("release_date").toLocalDate(),
+                    rs.getInt("duration"),
+                    rs.getObject("mpa_id") != null
+                            ? new MPA(rs.getInt("mpa_id"), rs.getString("mpa_name"))
+                            : null,
+                    new ArrayList<>()
+            );
+            filmMap.put(filmId, film);
+        });
+
+        if (!filmMap.isEmpty()) {
+            String genreQuery = """
+                SELECT fg.film_id, g.genre_id, g.genre_name
+                FROM FILM_GENRES fg
+                JOIN GENRES g ON fg.genre_id = g.genre_id
+                WHERE fg.film_id IN (:filmIds)
+                """;
+
+            MapSqlParameterSource genreParams = new MapSqlParameterSource();
+            genreParams.addValue("filmIds", new ArrayList<>(filmMap.keySet()));
+
+            jdbc.query(genreQuery, genreParams, rs -> {
+                int filmId = rs.getInt("film_id");
+                Film film = filmMap.get(filmId);
+                if (film != null) {
+                    film.getGenres().add(new Genre(
+                            rs.getInt("genre_id"),
+                            rs.getString("genre_name")
+                    ));
+                }
+            });
+        }
+
+        return new ArrayList<>(filmMap.values());
+    }
 }
