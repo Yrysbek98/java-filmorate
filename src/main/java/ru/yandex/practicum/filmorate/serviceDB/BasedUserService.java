@@ -4,8 +4,12 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.UserNotFoundException;
 import ru.yandex.practicum.filmorate.exception.UserValidationException;
+import ru.yandex.practicum.filmorate.model.Event;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.model.enums.EventType;
+import ru.yandex.practicum.filmorate.model.enums.Operation;
+import ru.yandex.practicum.filmorate.repository.EventRepository;
 import ru.yandex.practicum.filmorate.repository.UserRepository;
 
 import java.util.List;
@@ -17,6 +21,7 @@ public class BasedUserService implements UserServiceDB {
 
     private final UserRepository userRepository;
     private final RecommendationService recommendationService;
+    private final EventRepository eventRepository;
 
     @Override
     public Optional<User> getUserById(int id) {
@@ -70,6 +75,13 @@ public class BasedUserService implements UserServiceDB {
         final User fr = userRepository.getUserById(idOfFriend)
                 .orElseThrow(() -> new UserNotFoundException("Пользователь с таким " + idOfFriend + " не найден"));
         userRepository.addFriend(u.getId(), fr.getId());
+        Event event = new Event(
+                System.currentTimeMillis(),
+                u.getId(),
+                EventType.FRIEND,
+                Operation.ADD,
+                fr.getId());
+        eventRepository.addEvent(event);
     }
 
     @Override
@@ -82,6 +94,13 @@ public class BasedUserService implements UserServiceDB {
         final User fr = userRepository.getUserById(idOfFriend)
                 .orElseThrow(() -> new UserNotFoundException("Пользователь с таким " + idOfFriend + " не найден"));
         userRepository.deleteFriend(u.getId(), fr.getId());
+        Event event = new Event(
+                System.currentTimeMillis(),
+                u.getId(),
+                EventType.FRIEND,
+                Operation.REMOVE,
+                fr.getId());
+        eventRepository.addEvent(event);
     }
 
     @Override

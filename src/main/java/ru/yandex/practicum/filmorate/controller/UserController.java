@@ -11,8 +11,10 @@ import ru.yandex.practicum.filmorate.dto.ErrorResponse;
 import ru.yandex.practicum.filmorate.exception.AbstractDtoException;
 import ru.yandex.practicum.filmorate.exception.UserNotFoundException;
 import ru.yandex.practicum.filmorate.exception.UserValidationException;
+import ru.yandex.practicum.filmorate.model.Event;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.serviceDB.EventServiceDB;
 import ru.yandex.practicum.filmorate.serviceDB.UserServiceDB;
 
 import java.util.List;
@@ -24,6 +26,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class UserController {
     private final UserServiceDB userServiceDB;
+    private final EventServiceDB eventServiceDB;
 
     @GetMapping
     public List<User> findAll() {
@@ -80,6 +83,12 @@ public class UserController {
         return userServiceDB.getFriends(id);
     }
 
+    @GetMapping("/{id}/feed")
+    public List<Event> getFeeds(
+            @PathVariable int id
+    ) {
+        return eventServiceDB.getUsersEvents(id);
+    }
     // Новый endpoint для рекомендаций
     @GetMapping("/{id}/recommendations")
     public List<Film> getRecommendations(@PathVariable int id) {

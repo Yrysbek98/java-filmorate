@@ -3,13 +3,13 @@ package ru.yandex.practicum.filmorate.serviceDB;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.*;
+import ru.yandex.practicum.filmorate.model.Event;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.Mpa;
-import ru.yandex.practicum.filmorate.repository.DirectorRepository;
-import ru.yandex.practicum.filmorate.repository.FilmRepository;
-import ru.yandex.practicum.filmorate.repository.GenreRepository;
-import ru.yandex.practicum.filmorate.repository.MpaRepository;
+import ru.yandex.practicum.filmorate.model.enums.EventType;
+import ru.yandex.practicum.filmorate.model.enums.Operation;
+import ru.yandex.practicum.filmorate.repository.*;
 
 
 import java.util.List;
@@ -23,6 +23,7 @@ public class BasedFilmService implements FilmServiceDB {
     final MpaRepository mpaRepository;
     final GenreRepository genreRepository;
     final DirectorRepository directorRepository;
+    final EventRepository eventRepository;
 
     @Override
     public Optional<Film> getFilmById(int id) {
@@ -110,6 +111,13 @@ public class BasedFilmService implements FilmServiceDB {
             throw new FilmNotFoundException("Фильм с таким " + id + " не найден");
         }
         filmRepository.addLike(id, userId);
+        Event event = new Event(
+                System.currentTimeMillis(),
+                userId,
+                EventType.LIKE,
+                Operation.ADD,
+                id);
+        eventRepository.addEvent(event);
     }
 
     @Override
@@ -125,6 +133,13 @@ public class BasedFilmService implements FilmServiceDB {
             throw new FilmNotFoundException("Фильм с таким " + id + " не найден");
         }
         filmRepository.deleteLike(id, userId);
+        Event event = new Event(
+                System.currentTimeMillis(),
+                userId,
+                EventType.LIKE,
+                Operation.REMOVE,
+                id);
+        eventRepository.addEvent(event);
     }
 
     @Override

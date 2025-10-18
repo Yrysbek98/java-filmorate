@@ -3,8 +3,12 @@ package ru.yandex.practicum.filmorate.serviceDB;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.*;
+import ru.yandex.practicum.filmorate.model.Event;
 import ru.yandex.practicum.filmorate.model.Review;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.model.enums.EventType;
+import ru.yandex.practicum.filmorate.model.enums.Operation;
+import ru.yandex.practicum.filmorate.repository.EventRepository;
 import ru.yandex.practicum.filmorate.repository.FilmRepository;
 import ru.yandex.practicum.filmorate.repository.ReviewRepository;
 import ru.yandex.practicum.filmorate.repository.UserRepository;
@@ -18,6 +22,7 @@ public class BasedReviewService implements ReviewServiceDB {
     final ReviewRepository reviewRepository;
     final FilmRepository filmRepository;
     final UserRepository userRepository;
+    final EventRepository eventRepository;
 
     @Override
     public Review createReview(Review review) {
@@ -34,7 +39,17 @@ public class BasedReviewService implements ReviewServiceDB {
             throw new FilmNotFoundException("Фильм не может быть null");
         }
 
-        return reviewRepository.createReview(review);
+        Review savedReview = reviewRepository.createReview(review);
+
+        Event event = new Event(
+                System.currentTimeMillis(),
+                savedReview.getUserId(),
+                EventType.REVIEW,
+                Operation.ADD,
+                savedReview.getReviewId());
+        eventRepository.addEvent(event);
+
+        return savedReview;
 
     }
 
@@ -44,6 +59,14 @@ public class BasedReviewService implements ReviewServiceDB {
         if (r.isEmpty()) {
             throw new ReviewNotFoundException("Отзыв с таким id=" + review.getReviewId() + " не  найден");
         }
+
+        Event event = new Event(
+                System.currentTimeMillis(),
+                r.get().getUserId(),
+                EventType.REVIEW,
+                Operation.UPDATE,
+                r.get().getReviewId());
+        eventRepository.addEvent(event);
         return reviewRepository.updateReview(review);
     }
 
@@ -54,6 +77,13 @@ public class BasedReviewService implements ReviewServiceDB {
             throw new ReviewNotFoundException("Отзыв с таким id=" + id + " не  найден");
         }
         reviewRepository.deleteReview(id);
+        Event event = new Event(
+                System.currentTimeMillis(),
+                r.get().getUserId(),
+                EventType.REVIEW,
+                Operation.REMOVE,
+                r.get().getReviewId());
+        eventRepository.addEvent(event);
     }
 
     @Override
