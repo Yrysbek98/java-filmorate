@@ -137,10 +137,10 @@ public class BasedFilmService implements FilmServiceDB {
     }
 
     @Override
-    public List<Film> searchFilms(String query) {
+    public List<Film> searchFilms(String query, String by) {
         if (query == null || query.isBlank()) {
             return List.of();
         }
-        return filmRepository.searchFilms(query.trim().toLowerCase());
+        return filmRepository.searchFilms(query.trim().toLowerCase(), by);
     }
 }

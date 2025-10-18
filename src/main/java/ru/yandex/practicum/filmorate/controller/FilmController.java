@@ -109,8 +109,9 @@ public class FilmController {
     }
 
     @GetMapping("/search")
-    public List<Film> searchFilms(@RequestParam String query) {
-        log.info("Поиск фильмов по ключевому слову: {}", query);
-        return filmServiceDB.searchFilms(query);
+    public List<Film> searchFilms(@RequestParam String query,
+                                  @RequestParam String by) {
+        log.info("Поиск фильмов по запросу '{}' по полям '{}'", query, by);
+        return filmServiceDB.searchFilms(query, by);
     }
 }
