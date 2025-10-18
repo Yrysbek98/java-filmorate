@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
 import org.springframework.stereotype.Repository;
-import ru.yandex.practicum.filmorate.model.MPA;
+import ru.yandex.practicum.filmorate.model.Mpa;
 
 import java.util.*;
 
@@ -22,7 +22,7 @@ public class JdbcMpaRepository implements MpaRepository {
     }
 
     @Override
-    public Optional<MPA> getMpaById(int id) {
+    public Optional<Mpa> getMpaById(int id) {
         String query = """
                 SELECT mpa_id, name
                 FROM MPA
@@ -32,8 +32,8 @@ public class JdbcMpaRepository implements MpaRepository {
         MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue("id", id);
 
-        List<MPA> result = jdbc.query(query, params, (rs, rowNum) ->
-                new MPA(
+        List<Mpa> result = jdbc.query(query, params, (rs, rowNum) ->
+                new Mpa(
                         rs.getInt("mpa_id"),
                         rs.getString("name")
                 )
@@ -44,15 +44,15 @@ public class JdbcMpaRepository implements MpaRepository {
     }
 
     @Override
-    public List<MPA> getAllMpa() {
+    public List<Mpa> getAllMpa() {
         String query = """
                 SELECT m.mpa_id, m.name
                 FROM MPA AS m
                 """;
-        Map<Integer, MPA> mpaMap = new LinkedHashMap<>();
+        Map<Integer, Mpa> mpaMap = new LinkedHashMap<>();
         jdbc.query(query, rs -> {
             int mpaId = rs.getInt("mpa_id");
-            MPA mpa = new MPA(
+            Mpa mpa = new Mpa(
                     mpaId,
                     rs.getString("name")
             );

@@ -8,8 +8,7 @@ import org.springframework.lang.Nullable;
 import ru.yandex.practicum.filmorate.helper.ReleaseDateConstraint;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 
 @NoArgsConstructor
@@ -25,8 +24,9 @@ public class Film {
     @Positive(message = "Продолжительность фильма должна быть положительным числом.")
     private int duration;
     @Nullable
-    private MPA mpa;
+    private Mpa mpa;
     private List<Genre> genres = new ArrayList<>();
+    private Set<Director> directors = new HashSet<>();
 
 
     public Film(int id, String name, String description, LocalDate releaseDate, int duration) {
@@ -37,7 +37,7 @@ public class Film {
         this.duration = duration;
     }
 
-    public Film(int id, String name, String description, LocalDate releaseDate, int duration, MPA mpa, List<Genre> genres) {
+    public Film(int id, String name, String description, LocalDate releaseDate, int duration, Mpa mpa, List<Genre> genres) {
         this.id = id;
         this.name = name;
         this.description = description;

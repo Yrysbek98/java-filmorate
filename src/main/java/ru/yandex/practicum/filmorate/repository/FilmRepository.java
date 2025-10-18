@@ -27,4 +27,7 @@ public interface FilmRepository {
     List<Film> getPopularFilms(int count, Integer genreId, Integer year);
 
     List<Film> getFilmsByIds(List<Integer> filmIds);
+
+    // Получения списка фильмов по режиссеру
+    List<Film> getFilmsByDirector(int directorId, String sortBy);
 }

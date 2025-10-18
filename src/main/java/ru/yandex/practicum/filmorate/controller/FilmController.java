@@ -73,6 +73,13 @@ public class FilmController {
         return filmServiceDB.getPopularFilms(count, genreId, year);
     }
 
+    @GetMapping("/director/{directorId}")
+    public List<Film> getFilmsByDirector(
+            @PathVariable int directorId,
+            @RequestParam String sortBy) {
+        return filmServiceDB.getFilmsByDirector(directorId, sortBy);
+    }
+
     @ExceptionHandler
     public ResponseEntity<ErrorResponse> handleServerExceptions(AbstractDtoException exception) {
         ErrorResponse errorResponse = exception.toResponse();

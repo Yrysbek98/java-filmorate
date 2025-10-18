@@ -5,7 +5,8 @@ import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.*;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
-import ru.yandex.practicum.filmorate.model.MPA;
+import ru.yandex.practicum.filmorate.model.Mpa;
+import ru.yandex.practicum.filmorate.repository.DirectorRepository;
 import ru.yandex.practicum.filmorate.repository.FilmRepository;
 import ru.yandex.practicum.filmorate.repository.GenreRepository;
 import ru.yandex.practicum.filmorate.repository.MpaRepository;
@@ -21,6 +22,7 @@ public class BasedFilmService implements FilmServiceDB {
     final FilmRepository filmRepository;
     final MpaRepository mpaRepository;
     final GenreRepository genreRepository;
+    final DirectorRepository directorRepository;
 
     @Override
     public Optional<Film> getFilmById(int id) {
@@ -42,9 +44,23 @@ public class BasedFilmService implements FilmServiceDB {
         return filmRepository.findAllFilms();
     }
 
+    // Получения списка фильмов по режиссеру
+    @Override
+    public List<Film> getFilmsByDirector(int directorId, String sortBy) {
+        directorRepository.findDirectorById(directorId)
+                .orElseThrow(() -> new DirectorNotFoundException("Режиссер с id =" + directorId + " не найден."));
+
+        if (!"year".equals(sortBy) && !"likes".equals(sortBy)) {
+            throw new FilmValidationException("Неверный параметр sortBy: " + sortBy +
+                    ". Допустимые значения: 'year', 'likes'.");
+        }
+
+        return filmRepository.getFilmsByDirector(directorId, sortBy);
+    }
+
     @Override
     public Film createFilm(Film film) {
-        Optional<MPA> mpa = mpaRepository.getMpaById(film.getMpa().getId());
+        Optional<Mpa> mpa = mpaRepository.getMpaById(film.getMpa().getId());
         if (mpa.isEmpty()) {
             throw new MpaNotFoundException("Рейтинг с таким id= " + film.getMpa().getId() + " не найден");
         }
@@ -119,4 +135,6 @@ public class BasedFilmService implements FilmServiceDB {
 
         return filmRepository.getPopularFilms(count, genreId, year);
     }
+
+
 }
