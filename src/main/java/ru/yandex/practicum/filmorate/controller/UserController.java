@@ -89,6 +89,7 @@ public class UserController {
     ) {
         return eventServiceDB.getUsersEvents(id);
     }
+
     // Новый endpoint для рекомендаций
     @GetMapping("/{id}/recommendations")
     public List<Film> getRecommendations(@PathVariable int id) {
