@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.dto.ErrorResponse;
 import ru.yandex.practicum.filmorate.exception.*;
 
-import ru.yandex.practicum.filmorate.model.MPA;
+import ru.yandex.practicum.filmorate.model.Mpa;
 import ru.yandex.practicum.filmorate.serviceDB.MpaServiceDB;
 
 import java.util.List;
@@ -21,12 +21,12 @@ public class MpaController {
     private final MpaServiceDB mpaServiceDB;
 
     @GetMapping
-    public List<MPA> findAllMPA() {
+    public List<Mpa> findAllMPA() {
         return mpaServiceDB.getAllMpa();
     }
 
     @GetMapping("/{id}")
-    public Optional<MPA> getMpaById(
+    public Optional<Mpa> getMpaById(
             @PathVariable int id) {
         return mpaServiceDB.getMpaById(id);
     }

@@ -1,6 +1,6 @@
 package ru.yandex.practicum.filmorate.repository;
 
-import ru.yandex.practicum.filmorate.model.MPA;
+import ru.yandex.practicum.filmorate.model.Mpa;
 
 import java.util.List;
 import java.util.Optional;
@@ -8,7 +8,7 @@ import java.util.Optional;
 public interface MpaRepository {
     int findMpaIdByName(String mpaName);
 
-    Optional<MPA> getMpaById(int id);
+    Optional<Mpa> getMpaById(int id);
 
-    List<MPA> getAllMpa();
+    List<Mpa> getAllMpa();
 }

@@ -17,11 +17,16 @@ public interface FilmServiceDB {
 
     Optional<Film> changeFilm(Film film);
 
+    void deleteFilm(int id);
+
     void addLike(int id, int userId);
 
     void deleteLike(int id, int userId);
 
     List<Film> getPopularFilms(int count, Integer genreId, Integer year);
+
+    // Получения списка фильмов по режиссеру
+    List<Film> getFilmsByDirector(int directorId, String sortBy);
 
     List<Film> searchFilms(String query);
 }

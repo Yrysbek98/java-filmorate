@@ -5,7 +5,7 @@ import org.springframework.stereotype.Service;
 
 import ru.yandex.practicum.filmorate.exception.MpaNotFoundException;
 
-import ru.yandex.practicum.filmorate.model.MPA;
+import ru.yandex.practicum.filmorate.model.Mpa;
 import ru.yandex.practicum.filmorate.repository.MpaRepository;
 
 import java.util.List;
@@ -23,8 +23,8 @@ public class BasedMpaService implements MpaServiceDB {
     }
 
     @Override
-    public Optional<MPA> getMpaById(int id) {
-        Optional<MPA> mpa = mpaRepository.getMpaById(id);
+    public Optional<Mpa> getMpaById(int id) {
+        Optional<Mpa> mpa = mpaRepository.getMpaById(id);
         if (mpa.isEmpty()) {
             throw new MpaNotFoundException("Рейтинг с таким id= " + id + " не найден");
         }
@@ -32,7 +32,7 @@ public class BasedMpaService implements MpaServiceDB {
     }
 
     @Override
-    public List<MPA> getAllMpa() {
+    public List<Mpa> getAllMpa() {
         return mpaRepository.getAllMpa();
     }
 }
