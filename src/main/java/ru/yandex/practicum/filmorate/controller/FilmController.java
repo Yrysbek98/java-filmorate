@@ -80,6 +80,13 @@ public class FilmController {
         return filmServiceDB.getFilmsByDirector(directorId, sortBy);
     }
 
+    @GetMapping("/search")
+    public List<Film> searchFilms(@RequestParam String query,
+                                  @RequestParam String by) {
+        log.info("Поиск фильмов по запросу '{}' по полям '{}'", query, by);
+        return filmServiceDB.searchFilms(query, by);
+    }
+
     @ExceptionHandler
     public ResponseEntity<ErrorResponse> handleServerExceptions(AbstractDtoException exception) {
         ErrorResponse errorResponse = exception.toResponse();
@@ -108,10 +115,4 @@ public class FilmController {
         return new ResponseEntity<>(errorResponse, errorResponse.httpStatusCode());
     }
 
-    @GetMapping("/search")
-    public List<Film> searchFilms(@RequestParam String query,
-                                  @RequestParam String by) {
-        log.info("Поиск фильмов по запросу '{}' по полям '{}'", query, by);
-        return filmServiceDB.searchFilms(query, by);
-    }
 }
