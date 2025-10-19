@@ -9,6 +9,7 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.exception.FilmNotFoundException;
 import ru.yandex.practicum.filmorate.model.Director;
+import ru.yandex.practicum.filmorate.exception.FilmValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.Mpa;
@@ -534,5 +535,110 @@ public class JdbcFilmRepository implements FilmRepository {
         for (Film film : films) {
             film.setDirectors(directorsByFilmId.getOrDefault(film.getId(), new LinkedHashSet<>()));
         }
+    }
+
+    @Override
+    public List<Film> searchFilms(String query, String by) {
+        String pattern = "%" + query.toLowerCase() + "%";
+
+        StringBuilder sql = new StringBuilder("""
+                    SELECT f.film_id, f.name, f.description, f.release_date, f.duration,
+                           m.mpa_id, m.name AS mpa_name,
+                           COUNT(l.user_id) AS likes_count
+                    FROM films f
+                    LEFT JOIN mpa m ON f.mpa_id = m.mpa_id
+                    LEFT JOIN likes l ON f.film_id = l.film_id
+                    LEFT JOIN film_director fd ON f.film_id = fd.film_id
+                    LEFT JOIN directors d ON fd.director_id = d.id
+                    WHERE
+                """);
+
+        List<String> conditions = new ArrayList<>();
+
+        if (by.contains("title")) {
+            conditions.add("LOWER(f.name) LIKE :pattern");
+        }
+        if (by.contains("director")) {
+            conditions.add("LOWER(d.name) LIKE :pattern");
+        }
+
+        if (conditions.isEmpty()) {
+            throw new FilmValidationException("Параметр 'by' должен содержать хотя бы 'title' или 'director'");
+        }
+
+        sql.append(String.join(" OR ", conditions));
+        sql.append("""
+                    GROUP BY f.film_id
+                    ORDER BY likes_count DESC
+                """);
+
+        MapSqlParameterSource params = new MapSqlParameterSource("pattern", pattern);
+
+        Map<Integer, Film> filmMap = new LinkedHashMap<>();
+
+        jdbc.query(sql.toString(), params, rs -> {
+            int filmId = rs.getInt("film_id");
+            Film film = new Film(
+                    filmId,
+                    rs.getString("name"),
+                    rs.getString("description"),
+                    rs.getDate("release_date").toLocalDate(),
+                    rs.getInt("duration"),
+                    rs.getObject("mpa_id") != null
+                            ? new Mpa(rs.getInt("mpa_id"), rs.getString("mpa_name"))
+                            : null,
+                    new ArrayList<>()
+            );
+            filmMap.put(filmId, film);
+        });
+
+        if (!filmMap.isEmpty()) {
+            String directorQuery = """
+                        SELECT fd.film_id, d.id AS director_id, d.name AS director_name
+                        FROM film_director fd
+                        JOIN directors d ON fd.director_id = d.id
+                        WHERE fd.film_id IN (:filmIds)
+                    """;
+
+            MapSqlParameterSource directorParams = new MapSqlParameterSource();
+            directorParams.addValue("filmIds", new ArrayList<>(filmMap.keySet()));
+
+            jdbc.query(directorQuery, directorParams, rs -> {
+                int filmId = rs.getInt("film_id");
+                Film film = filmMap.get(filmId);
+                if (film != null) {
+                    film.getDirectors().add(new Director(
+                            rs.getInt("director_id"),
+                            rs.getString("director_name")
+                    ));
+                }
+            });
+        }
+
+        if (!filmMap.isEmpty()) {
+            String genreQuery = """
+            SELECT fg.film_id, g.genre_id, g.genre_name
+            FROM film_genres fg
+            JOIN genres g ON fg.genre_id = g.genre_id
+            WHERE fg.film_id IN (:filmIds)
+        """;
+
+            MapSqlParameterSource genreParams = new MapSqlParameterSource();
+            genreParams.addValue("filmIds", new ArrayList<>(filmMap.keySet()));
+
+            jdbc.query(genreQuery, genreParams, rs -> {
+                int filmId = rs.getInt("film_id");
+                Film film = filmMap.get(filmId);
+                if (film != null) {
+                    film.getGenres().add(new Genre(
+                            rs.getInt("genre_id"),
+                            rs.getString("genre_name")
+                    ));
+                }
+            });
+        }
+
+
+        return new ArrayList<>(filmMap.values());
     }
 }

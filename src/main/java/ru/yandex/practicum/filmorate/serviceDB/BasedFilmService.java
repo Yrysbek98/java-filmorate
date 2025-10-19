@@ -151,5 +151,11 @@ public class BasedFilmService implements FilmServiceDB {
         return filmRepository.getPopularFilms(count, genreId, year);
     }
 
-
+    @Override
+    public List<Film> searchFilms(String query, String by) {
+        if (query == null || query.isBlank()) {
+            return List.of();
+        }
+        return filmRepository.searchFilms(query.trim().toLowerCase(), by);
+    }
 }
