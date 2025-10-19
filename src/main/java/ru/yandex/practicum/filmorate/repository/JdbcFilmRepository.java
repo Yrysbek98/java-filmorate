@@ -541,7 +541,6 @@ public class JdbcFilmRepository implements FilmRepository {
     public List<Film> searchFilms(String query, String by) {
         String pattern = "%" + query.toLowerCase() + "%";
 
-        // Соберём SQL динамически в зависимости от параметра "by"
         StringBuilder sql = new StringBuilder("""
                     SELECT f.film_id, f.name, f.description, f.release_date, f.duration,
                            m.mpa_id, m.name AS mpa_name,
