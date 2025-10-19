@@ -59,7 +59,7 @@ public class BasedFilmService implements FilmServiceDB {
     }
 
     @Override
-    public List<Film> getCommonFilms(Long userId, Long friendId) {
+    public List<Film> getCommonFilms(int userId, int friendId) {
         return filmRepository.getCommonFilms(userId, friendId);
     }
 

@@ -472,7 +472,7 @@ public class JdbcFilmRepository implements FilmRepository {
     }
 
     @Override
-    public List<Film> getCommonFilms(Long userId, Long friendId) {
+    public List<Film> getCommonFilms(int userId, int friendId) {
         String sql = """
             SELECT f.film_id
             FROM likes l

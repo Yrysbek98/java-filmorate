@@ -80,6 +80,12 @@ public class FilmController {
         return filmServiceDB.getFilmsByDirector(directorId, sortBy);
     }
 
+    @GetMapping("/common")
+    public List<Film> getCommonFilms(@RequestParam int userId,
+                                     @RequestParam int friendId) {
+        return filmServiceDB.getCommonFilms(userId, friendId);
+    }
+
     @ExceptionHandler
     public ResponseEntity<ErrorResponse> handleServerExceptions(AbstractDtoException exception) {
         ErrorResponse errorResponse = exception.toResponse();
@@ -107,12 +113,4 @@ public class FilmController {
 
         return new ResponseEntity<>(errorResponse, errorResponse.httpStatusCode());
     }
-
-
-    @GetMapping("/common")
-    public List<Film> getCommonFilms(@RequestParam Long userId,
-                                     @RequestParam Long friendId) {
-        return filmServiceDB.getCommonFilms(userId, friendId);
-    }
-
 }
