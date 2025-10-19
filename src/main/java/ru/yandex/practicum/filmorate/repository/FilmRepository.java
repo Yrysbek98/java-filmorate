@@ -30,4 +30,6 @@ public interface FilmRepository {
 
     // Получения списка фильмов по режиссеру
     List<Film> getFilmsByDirector(int directorId, String sortBy);
+
+    List<Film> getCommonFilms(Long userId, Long friendId);
 }

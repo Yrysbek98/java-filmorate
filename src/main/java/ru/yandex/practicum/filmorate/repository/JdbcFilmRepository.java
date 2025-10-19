@@ -471,6 +471,38 @@ public class JdbcFilmRepository implements FilmRepository {
         return films;
     }
 
+    @Override
+    public List<Film> getCommonFilms(Long userId, Long friendId) {
+        String sql = """
+            SELECT f.film_id
+            FROM likes l
+            JOIN films f ON l.film_id = f.film_id
+            WHERE l.film_id IN (
+                SELECT film_id
+                FROM likes
+                WHERE user_id IN (:userId, :friendId)
+                GROUP BY film_id
+                HAVING COUNT(DISTINCT user_id) = 2
+            )
+            GROUP BY f.film_id
+            ORDER BY COUNT(l.user_id) DESC
+            """;
+
+        MapSqlParameterSource params = new MapSqlParameterSource();
+        params.addValue("userId", userId);
+        params.addValue("friendId", friendId);
+
+        List<Integer> filmIds = jdbc.queryForList(sql, params, Integer.class);
+
+        if (filmIds.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        List<Film> films = getFilmsByIds(filmIds);
+
+        return films;
+    }
+
     // Метод для загрузки режиссера фильма
     private void loadDirectorsForFilm(Film film) {
         if (film == null) return;

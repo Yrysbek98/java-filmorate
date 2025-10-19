@@ -108,4 +108,11 @@ public class FilmController {
         return new ResponseEntity<>(errorResponse, errorResponse.httpStatusCode());
     }
 
+
+    @GetMapping("/common")
+    public List<Film> getCommonFilms(@RequestParam Long userId,
+                                     @RequestParam Long friendId) {
+        return filmServiceDB.getCommonFilms(userId, friendId);
+    }
+
 }
