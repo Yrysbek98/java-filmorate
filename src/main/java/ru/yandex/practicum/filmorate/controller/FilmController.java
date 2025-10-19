@@ -87,6 +87,12 @@ public class FilmController {
         return filmServiceDB.searchFilms(query, by);
     }
 
+    @GetMapping("/common")
+    public List<Film> getCommonFilms(@RequestParam int userId,
+                                     @RequestParam int friendId) {
+        return filmServiceDB.getCommonFilms(userId, friendId);
+    }
+
     @ExceptionHandler
     public ResponseEntity<ErrorResponse> handleServerExceptions(AbstractDtoException exception) {
         ErrorResponse errorResponse = exception.toResponse();

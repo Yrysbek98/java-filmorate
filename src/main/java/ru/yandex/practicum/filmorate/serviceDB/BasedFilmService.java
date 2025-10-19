@@ -60,6 +60,11 @@ public class BasedFilmService implements FilmServiceDB {
     }
 
     @Override
+    public List<Film> getCommonFilms(int userId, int friendId) {
+        return filmRepository.getCommonFilms(userId, friendId);
+    }
+
+    @Override
     public Film createFilm(Film film) {
         Optional<Mpa> mpa = mpaRepository.getMpaById(film.getMpa().getId());
         if (mpa.isEmpty()) {
