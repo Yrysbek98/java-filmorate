@@ -45,13 +45,13 @@ class FilmControllerSearchTest {
 
         // добавляем фильмы
         jdbc.getJdbcTemplate().update("""
-            INSERT INTO films (film_id, name, description, release_date, duration, mpa_id)
-            VALUES (1, 'Pulp Fiction', 'Crime movie', '1994-10-14', 154, 1)
-        """);
+                    INSERT INTO films (film_id, name, description, release_date, duration, mpa_id)
+                    VALUES (1, 'Pulp Fiction', 'Crime movie', '1994-10-14', 154, 1)
+                """);
         jdbc.getJdbcTemplate().update("""
-            INSERT INTO films (film_id, name, description, release_date, duration, mpa_id)
-            VALUES (2, 'Inglourious Basterds', 'War movie', '2009-08-20', 153, 1)
-        """);
+                    INSERT INTO films (film_id, name, description, release_date, duration, mpa_id)
+                    VALUES (2, 'Inglourious Basterds', 'War movie', '2009-08-20', 153, 1)
+                """);
         film1Id = 1;
         film2Id = 2;
 

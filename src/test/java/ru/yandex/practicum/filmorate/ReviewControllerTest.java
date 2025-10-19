@@ -97,7 +97,7 @@ public class ReviewControllerTest {
         assertTrue(saved.getReviewId() > 0);
         assertEquals("Средне", saved.getContent());
 
-        List<Review> all = reviewRepository.getAllReviews(user1.getId(),10);
+        List<Review> all = reviewRepository.getAllReviews(user1.getId(), 10);
         assertThat(all).hasSize(2);
     }
 

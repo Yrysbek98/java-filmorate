@@ -1,4 +1,5 @@
 package ru.yandex.practicum.filmorate;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -37,6 +38,7 @@ public class FilmControllerFeedTest {
 
     private User user1;
     private Film film1;
+
     @BeforeEach
     void setUp() {
         user1 = userRepository.createUser(
