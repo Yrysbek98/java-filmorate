@@ -23,7 +23,7 @@ public interface FilmServiceDB {
 
     void deleteLike(int id, int userId);
 
-    List<Film> getPopularFilms(int count, Integer genreId, Integer year);
+    List<Film> getPopularFilms(Integer count, Integer genreId, Integer year);
 
     // Получения списка фильмов по режиссеру
     List<Film> getFilmsByDirector(int directorId, String sortBy);

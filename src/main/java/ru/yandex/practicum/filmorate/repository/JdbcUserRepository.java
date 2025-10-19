@@ -112,6 +112,9 @@ public class JdbcUserRepository implements UserRepository {
         jdbc.update("DELETE FROM FRIENDS WHERE USER_ID = :id OR FRIEND_ID = :id",
                 new MapSqlParameterSource("id", id));
 
+        jdbc.update("DELETE FROM EVENTS WHERE USER_ID = :id",
+                new MapSqlParameterSource("id", id));
+
         return jdbc.update("DELETE FROM USERS WHERE USER_ID = :id",
                 new MapSqlParameterSource("id", id)) > 0;
     }
