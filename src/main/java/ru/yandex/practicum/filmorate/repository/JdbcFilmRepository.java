@@ -616,6 +616,30 @@ public class JdbcFilmRepository implements FilmRepository {
             });
         }
 
+        if (!filmMap.isEmpty()) {
+            String genreQuery = """
+            SELECT fg.film_id, g.genre_id, g.genre_name
+            FROM film_genres fg
+            JOIN genres g ON fg.genre_id = g.genre_id
+            WHERE fg.film_id IN (:filmIds)
+        """;
+
+            MapSqlParameterSource genreParams = new MapSqlParameterSource();
+            genreParams.addValue("filmIds", new ArrayList<>(filmMap.keySet()));
+
+            jdbc.query(genreQuery, genreParams, rs -> {
+                int filmId = rs.getInt("film_id");
+                Film film = filmMap.get(filmId);
+                if (film != null) {
+                    film.getGenres().add(new Genre(
+                            rs.getInt("genre_id"),
+                            rs.getString("genre_name")
+                    ));
+                }
+            });
+        }
+
+
         return new ArrayList<>(filmMap.values());
     }
 }
