@@ -18,7 +18,7 @@ import ru.yandex.practicum.filmorate.serviceDB.event.EventServiceDB;
 import ru.yandex.practicum.filmorate.serviceDB.user.UserServiceDB;
 
 import java.util.List;
-import java.util.Optional;
+
 
 @Slf4j
 @RestController
@@ -34,8 +34,9 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public Optional<User> getUserById(@PathVariable int id) {
-        return userServiceDB.getUserById(id);
+    public User getUserById(@PathVariable int id) {
+        return userServiceDB.getUserById(id)
+                .orElseThrow(() -> new UserNotFoundException("Пользователь с id " + id + " не найден"));
     }
 
     @PostMapping
@@ -43,9 +44,17 @@ public class UserController {
         return userServiceDB.createUser(user);
     }
 
+    @PutMapping("/{id}")
+    public User changeUser(@PathVariable int id, @Valid @RequestBody User user) {
+        user.setId(id);
+        return userServiceDB.changeUser(user)
+                .orElseThrow(() -> new UserNotFoundException("Пользователь с id " + id + " не найден"));
+    }
+
     @PutMapping
-    public Optional<User> changeUser(@Valid @RequestBody User user) {
-        return userServiceDB.changeUser(user);
+    public User changeUserLegacy(@Valid @RequestBody User user) {
+        return userServiceDB.changeUser(user)
+                .orElseThrow(() -> new UserNotFoundException("Пользователь с id " + user.getId() + " не найден"));
     }
 
     @DeleteMapping("/{id}")
@@ -55,6 +64,7 @@ public class UserController {
     }
 
     @PutMapping("/{id}/friends/{friendId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public void addFriend(
             @PathVariable int id,
             @PathVariable int friendId
@@ -63,6 +73,7 @@ public class UserController {
     }
 
     @DeleteMapping("/{id}/friends/{friendId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteFriend(
             @PathVariable int id,
             @PathVariable int friendId
