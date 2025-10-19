@@ -148,7 +148,7 @@ public class BasedFilmService implements FilmServiceDB {
     }
 
     @Override
-    public List<Film> getPopularFilms(int count, Integer genreId, Integer year) {
+    public List<Film> getPopularFilms(Integer count, Integer genreId, Integer year) {
         if (count <= 0) {
             throw new FilmValidationException("Количество фильмов должно быть положительным числом");
         }

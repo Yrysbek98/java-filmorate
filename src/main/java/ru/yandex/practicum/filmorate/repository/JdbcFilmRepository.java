@@ -319,7 +319,7 @@ public class JdbcFilmRepository implements FilmRepository {
     }
 
     @Override
-    public List<Film> getPopularFilms(int count, Integer genreId, Integer year) {
+    public List<Film> getPopularFilms(Integer count, Integer genreId, Integer year) {
         StringBuilder filmQuery = new StringBuilder("""
                     SELECT f.film_id AS id, f.name, f.description, f.release_date, f.duration,
                            m.mpa_id, m.name AS mpa_name,
@@ -330,7 +330,7 @@ public class JdbcFilmRepository implements FilmRepository {
                 """);
 
         MapSqlParameterSource params = new MapSqlParameterSource();
-        params.addValue("count", count);
+        //  params.addValue("count", count);
 
         // Добавляем условия фильтрации
         if (genreId != null) {
@@ -346,7 +346,6 @@ public class JdbcFilmRepository implements FilmRepository {
         filmQuery.append("""
                     GROUP BY f.film_id, m.mpa_id, m.name
                     ORDER BY likes_count DESC
-                    LIMIT :count
                 """);
 
         Map<Integer, Film> filmMap = new LinkedHashMap<>();
@@ -446,8 +445,7 @@ public class JdbcFilmRepository implements FilmRepository {
                                 GROUP BY f.film_id
                                 ORDER BY likes_count DESC
                             """;
-            default ->
-                    throw new IllegalArgumentException("Неверный параметр сортировки: " + sortBy);
+            default -> throw new IllegalArgumentException("Неверный параметр сортировки: " + sortBy);
         };
 
         SqlParameterSource params = new MapSqlParameterSource("directorId", directorId);
@@ -475,19 +473,19 @@ public class JdbcFilmRepository implements FilmRepository {
     @Override
     public List<Film> getCommonFilms(int userId, int friendId) {
         String sql = """
-            SELECT f.film_id
-            FROM likes l
-            JOIN films f ON l.film_id = f.film_id
-            WHERE l.film_id IN (
-                SELECT film_id
-                FROM likes
-                WHERE user_id IN (:userId, :friendId)
-                GROUP BY film_id
-                HAVING COUNT(DISTINCT user_id) = 2
-            )
-            GROUP BY f.film_id
-            ORDER BY COUNT(l.user_id) DESC
-            """;
+                SELECT f.film_id
+                FROM likes l
+                JOIN films f ON l.film_id = f.film_id
+                WHERE l.film_id IN (
+                    SELECT film_id
+                    FROM likes
+                    WHERE user_id IN (:userId, :friendId)
+                    GROUP BY film_id
+                    HAVING COUNT(DISTINCT user_id) = 2
+                )
+                GROUP BY f.film_id
+                ORDER BY COUNT(l.user_id) DESC
+                """;
 
         MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue("userId", userId);
@@ -521,11 +519,11 @@ public class JdbcFilmRepository implements FilmRepository {
                 .collect(Collectors.toSet());
 
         String sql = """
-            SELECT fg.film_id, g.genre_id, g.genre_name
-            FROM FILM_GENRES fg
-            JOIN GENRES g ON fg.genre_id = g.genre_id
-            WHERE fg.film_id IN (:filmIds)
-            """;
+                SELECT fg.film_id, g.genre_id, g.genre_name
+                FROM FILM_GENRES fg
+                JOIN GENRES g ON fg.genre_id = g.genre_id
+                WHERE fg.film_id IN (:filmIds)
+                """;
 
         SqlParameterSource params = new MapSqlParameterSource("filmIds", filmIds);
 
@@ -649,11 +647,11 @@ public class JdbcFilmRepository implements FilmRepository {
 
         if (!filmMap.isEmpty()) {
             String genreQuery = """
-            SELECT fg.film_id, g.genre_id, g.genre_name
-            FROM film_genres fg
-            JOIN genres g ON fg.genre_id = g.genre_id
-            WHERE fg.film_id IN (:filmIds)
-        """;
+                        SELECT fg.film_id, g.genre_id, g.genre_name
+                        FROM film_genres fg
+                        JOIN genres g ON fg.genre_id = g.genre_id
+                        WHERE fg.film_id IN (:filmIds)
+                    """;
 
             MapSqlParameterSource genreParams = new MapSqlParameterSource();
             genreParams.addValue("filmIds", new ArrayList<>(filmMap.keySet()));
