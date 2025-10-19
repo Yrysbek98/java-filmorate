@@ -319,7 +319,7 @@ public class JdbcFilmRepository implements FilmRepository {
     }
 
     @Override
-    public List<Film> getPopularFilms(Integer count, Integer genreId, Integer year) {
+    public List<Film> getPopularFilms(int count, Integer genreId, Integer year) {
         StringBuilder filmQuery = new StringBuilder("""
                     SELECT f.film_id AS id, f.name, f.description, f.release_date, f.duration,
                            m.mpa_id, m.name AS mpa_name,
@@ -345,6 +345,7 @@ public class JdbcFilmRepository implements FilmRepository {
         filmQuery.append("""
                     GROUP BY f.film_id, m.mpa_id, m.name
                     ORDER BY likes_count DESC
+                    LIMIT :count
                 """);
 
         Map<Integer, Film> filmMap = new LinkedHashMap<>();
