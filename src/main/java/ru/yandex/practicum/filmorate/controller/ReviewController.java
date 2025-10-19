@@ -7,10 +7,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.dto.ErrorResponse;
 import ru.yandex.practicum.filmorate.exception.AbstractDtoException;
-import ru.yandex.practicum.filmorate.exception.ReviewNotFoundException;
-import ru.yandex.practicum.filmorate.exception.ReviewValidationException;
+import ru.yandex.practicum.filmorate.exception.review.ReviewNotFoundException;
+import ru.yandex.practicum.filmorate.exception.review.ReviewValidationException;
 import ru.yandex.practicum.filmorate.model.Review;
-import ru.yandex.practicum.filmorate.serviceDB.ReviewServiceDB;
+import ru.yandex.practicum.filmorate.serviceDB.review.ReviewServiceDB;
 
 import java.util.List;
 import java.util.Optional;

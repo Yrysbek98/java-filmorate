@@ -7,8 +7,10 @@ import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.dto.ErrorResponse;
 import ru.yandex.practicum.filmorate.exception.*;
 
+import ru.yandex.practicum.filmorate.exception.mpa.MpaNotFoundException;
+import ru.yandex.practicum.filmorate.exception.mpa.MpaValidationException;
 import ru.yandex.practicum.filmorate.model.Mpa;
-import ru.yandex.practicum.filmorate.serviceDB.MpaServiceDB;
+import ru.yandex.practicum.filmorate.serviceDB.mpa.MpaServiceDB;
 
 import java.util.List;
 import java.util.Optional;

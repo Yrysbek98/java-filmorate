@@ -8,8 +8,10 @@ import org.springframework.web.bind.annotation.*;
 
 import ru.yandex.practicum.filmorate.dto.ErrorResponse;
 import ru.yandex.practicum.filmorate.exception.*;
+import ru.yandex.practicum.filmorate.exception.genre.GenreNotFoundException;
+import ru.yandex.practicum.filmorate.exception.genre.GenreValidationException;
 import ru.yandex.practicum.filmorate.model.Genre;
-import ru.yandex.practicum.filmorate.serviceDB.GenreServiceDB;
+import ru.yandex.practicum.filmorate.serviceDB.genre.GenreServiceDB;
 
 import java.util.List;
 

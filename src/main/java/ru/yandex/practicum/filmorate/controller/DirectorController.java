@@ -9,8 +9,10 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.dto.ErrorResponse;
 import ru.yandex.practicum.filmorate.exception.*;
+import ru.yandex.practicum.filmorate.exception.director.DirectorNotFoundException;
+import ru.yandex.practicum.filmorate.exception.director.DirectorValidationException;
 import ru.yandex.practicum.filmorate.model.Director;
-import ru.yandex.practicum.filmorate.serviceDB.DirectorService;
+import ru.yandex.practicum.filmorate.serviceDB.director.DirectorServiceDB;
 
 import java.util.List;
 
@@ -20,7 +22,7 @@ import java.util.List;
 @Validated
 @RequiredArgsConstructor
 public class DirectorController {
-    private final DirectorService directorService;
+    private final DirectorServiceDB directorService;
 
     @GetMapping
     public List<Director> getAllDirectors() {

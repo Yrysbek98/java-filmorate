@@ -9,12 +9,12 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import ru.yandex.practicum.filmorate.controller.ReviewController;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.model.MPA;
+import ru.yandex.practicum.filmorate.model.Mpa;
 import ru.yandex.practicum.filmorate.model.Review;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.repository.FilmRepository;
-import ru.yandex.practicum.filmorate.repository.ReviewRepository;
-import ru.yandex.practicum.filmorate.repository.UserRepository;
+import ru.yandex.practicum.filmorate.repository.film.FilmRepository;
+import ru.yandex.practicum.filmorate.repository.review.ReviewRepository;
+import ru.yandex.practicum.filmorate.repository.user.UserRepository;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -53,8 +53,8 @@ public class ReviewControllerTest {
         user1 = userRepository.createUser(new User(1, "user1@mail.com", "user1", "User One", LocalDate.of(1990, 1, 1)));
         user2 = userRepository.createUser(new User(2, "user2@mail.com", "user2", "User Two", LocalDate.of(1992, 2, 2)));
 
-        film1 = filmRepository.createFilm(new Film(1, "Film One", "Desc", LocalDate.of(2000, 1, 1), 120, new MPA(1, "G"), List.of()));
-        film2 = filmRepository.createFilm(new Film(2, "Film Two", "Desc", LocalDate.of(2001, 1, 1), 130, new MPA(1, "PG"), List.of()));
+        film1 = filmRepository.createFilm(new Film(1, "Film One", "Desc", LocalDate.of(2000, 1, 1), 120, new Mpa(1, "G"), List.of()));
+        film2 = filmRepository.createFilm(new Film(2, "Film Two", "Desc", LocalDate.of(2001, 1, 1), 130, new Mpa(1, "PG"), List.of()));
 
         review1 = reviewRepository.createReview(new Review(1, "Отлично", true, 5, user1.getId(), film1.getId()));
         review2 = reviewRepository.createReview(new Review(2, "Хорошо", true, 3, user2.getId(), film1.getId()));

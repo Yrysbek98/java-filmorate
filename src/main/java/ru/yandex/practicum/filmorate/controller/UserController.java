@@ -9,13 +9,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.dto.ErrorResponse;
 import ru.yandex.practicum.filmorate.exception.AbstractDtoException;
-import ru.yandex.practicum.filmorate.exception.UserNotFoundException;
-import ru.yandex.practicum.filmorate.exception.UserValidationException;
+import ru.yandex.practicum.filmorate.exception.user.UserNotFoundException;
+import ru.yandex.practicum.filmorate.exception.user.UserValidationException;
 import ru.yandex.practicum.filmorate.model.Event;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.serviceDB.EventServiceDB;
-import ru.yandex.practicum.filmorate.serviceDB.UserServiceDB;
+import ru.yandex.practicum.filmorate.serviceDB.event.EventServiceDB;
+import ru.yandex.practicum.filmorate.serviceDB.user.UserServiceDB;
 
 import java.util.List;
 import java.util.Optional;
