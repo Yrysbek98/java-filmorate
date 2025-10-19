@@ -17,6 +17,7 @@ public class JdbcRecommendationRepository implements RecommendationRepository {
 
     private final UserRepository userRepository;
     private final FilmRepository filmRepository;
+
     @Override
     public List<Film> getRecommendations(int userId) {
 
