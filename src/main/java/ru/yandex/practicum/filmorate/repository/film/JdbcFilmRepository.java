@@ -338,14 +338,6 @@ public class JdbcFilmRepository implements FilmRepository {
             params.addValue("year", year);
         }
 
-        if (genreId == null && year == null) {
-            if (filmQuery.toString().contains("WHERE")) {
-                filmQuery.append(" AND f.name IN ('Film One', 'Film Two', 'Film Three') ");
-            } else {
-                filmQuery.append(" WHERE f.name IN ('Film One', 'Film Two', 'Film Three') ");
-            }
-        }
-
         filmQuery.append("""
                     GROUP BY f.film_id, m.mpa_id, m.name
                     ORDER BY likes_count DESC
@@ -354,8 +346,8 @@ public class JdbcFilmRepository implements FilmRepository {
 
         params.addValue("count", count);
 
-
         Map<Integer, Film> filmMap = new LinkedHashMap<>();
+
         jdbc.query(filmQuery.toString(), params, rs -> {
             int filmId = rs.getInt("id");
             Film film = new Film(
