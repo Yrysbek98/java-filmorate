@@ -11,7 +11,7 @@ public class Review {
     private Integer reviewId;
     private String content;
     private Boolean isPositive;
-    private int useful = 0;
+    private int useful;
     private Integer userId;
     private Integer filmId;
 }
