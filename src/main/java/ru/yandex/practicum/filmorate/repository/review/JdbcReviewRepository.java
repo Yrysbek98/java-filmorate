@@ -49,24 +49,26 @@ public class JdbcReviewRepository implements ReviewRepository {
 
     @Override
     public Optional<Review> updateReview(Review review) {
+
         Optional<Review> existingReview = getReviewById(review.getReviewId());
         if (existingReview.isEmpty()) {
             return Optional.empty();
         }
+
 
         int originalUseful = existingReview.get().getUseful();
 
         MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue("content", review.getContent());
         params.addValue("is_positive", review.getIsPositive());
-        params.addValue("useful", originalUseful); // Сохраняем оригинальное значение
+        params.addValue("useful", originalUseful);
         params.addValue("id", review.getReviewId());
 
         String updateReview = """
-            UPDATE REVIEWS
-            SET CONTENT = :content, IS_POSITIVE = :is_positive, USEFUL = :useful
-            WHERE review_id = :id
-            """;
+                UPDATE REVIEWS
+                SET CONTENT = :content, IS_POSITIVE = :is_positive, USEFUL = :useful
+                WHERE review_id = :id
+                """;
         jdbc.update(updateReview, params);
 
         return getReviewById(review.getReviewId());
@@ -193,14 +195,14 @@ public class JdbcReviewRepository implements ReviewRepository {
 
     private void recalculateUsefulness(int reviewId) {
         String calculateSql = """
-            UPDATE REVIEWS
-            SET USEFUL = (
-                SELECT COUNT(CASE WHEN is_like THEN 1 END) - COUNT(CASE WHEN NOT is_like THEN 1 END)
-                FROM REVIEW_LIKES
+                UPDATE REVIEWS
+                SET USEFUL = (
+                    SELECT COUNT(CASE WHEN is_like THEN 1 END) - COUNT(CASE WHEN NOT is_like THEN 1 END)
+                    FROM REVIEW_LIKES
+                    WHERE review_id = :reviewId
+                )
                 WHERE review_id = :reviewId
-            )
-            WHERE review_id = :reviewId
-            """;
+                """;
         MapSqlParameterSource params = new MapSqlParameterSource()
                 .addValue("reviewId", reviewId);
         jdbc.update(calculateSql, params);
