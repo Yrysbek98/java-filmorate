@@ -34,7 +34,6 @@ public class JdbcReviewRepository implements ReviewRepository {
             throw new IllegalArgumentException("Пользователь уже оставил отзыв на этот фильм");
         }
 
-        review.setUseful(0);
 
 
         String sql = """
