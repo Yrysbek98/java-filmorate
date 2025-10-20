@@ -122,7 +122,6 @@ public class JdbcReviewRepository implements ReviewRepository {
 
     @Override
     public void addLikeToReview(int reviewId, int userId) {
-        Optional<Review> reviewOpt = getReviewById(reviewId);
         MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue("id", reviewId);
         String updateReview = """
@@ -131,8 +130,6 @@ public class JdbcReviewRepository implements ReviewRepository {
                 WHERE review_id = :id
                 """;
         jdbc.update(updateReview, params);
-
-
     }
 
     @Override
