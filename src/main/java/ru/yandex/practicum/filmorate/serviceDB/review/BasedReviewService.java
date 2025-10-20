@@ -80,7 +80,7 @@ public class BasedReviewService implements ReviewServiceDB {
         if (r.isEmpty()) {
             throw new ReviewNotFoundException("Отзыв с таким id=" + id + " не  найден");
         }
-        reviewRepository.deleteReview(id);
+
         Event event = new Event(
                 System.currentTimeMillis(),
                 r.get().getUserId(),
@@ -88,6 +88,8 @@ public class BasedReviewService implements ReviewServiceDB {
                 Operation.REMOVE,
                 r.get().getReviewId());
         eventRepository.addEvent(event);
+
+        reviewRepository.deleteReview(id);
     }
 
     @Override
