@@ -192,14 +192,14 @@ public class JdbcReviewRepository implements ReviewRepository {
 
     private void recalculateUsefulness(int reviewId) {
         String calculateSql = """
-                UPDATE REVIEWS
-                SET USEFUL = (
-                    SELECT COALESCE(SUM(CASE WHEN is_like THEN 1 ELSE -1 END), 0)
-                    FROM REVIEW_LIKES
-                    WHERE review_id = :reviewId
-                )
+            UPDATE REVIEWS
+            SET USEFUL = (
+                SELECT COUNT(CASE WHEN is_like THEN 1 END) - COUNT(CASE WHEN NOT is_like THEN 1 END)
+                FROM REVIEW_LIKES
                 WHERE review_id = :reviewId
-                """;
+            )
+            WHERE review_id = :reviewId
+            """;
         MapSqlParameterSource params = new MapSqlParameterSource()
                 .addValue("reviewId", reviewId);
         jdbc.update(calculateSql, params);
