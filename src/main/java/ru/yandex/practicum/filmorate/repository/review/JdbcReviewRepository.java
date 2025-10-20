@@ -89,34 +89,36 @@ public class JdbcReviewRepository implements ReviewRepository {
 
     @Override
     public List<Review> getAllReviews(Integer filmId, Integer count) {
-        String baseSql = """
+
+        StringBuilder sqlBuilder = new StringBuilder("""
                 SELECT review_id, content, is_positive, useful, user_id, film_id
                 FROM REVIEWS
-                """;
-        String sqlWithFilmId;
-        Map<String, Object> params = new HashMap<>();
+                """);
+
+        MapSqlParameterSource params = new MapSqlParameterSource();
+
         if (filmId != null && filmId > 0) {
-            sqlWithFilmId = baseSql + "\nWHERE film_id = :filmId";
-            params.put("filmId", filmId);
-        } else {
-            sqlWithFilmId = baseSql;
+            sqlBuilder.append("WHERE film_id = :filmId\n");
+            params.addValue("filmId", filmId);
         }
 
-        List<Review> reviews = new ArrayList<>();
-        jdbc.query(sqlWithFilmId, params, (ResultSet rs) -> {
-                    Review review = new Review(
-                            rs.getObject("review_id", Integer.class),
-                            rs.getString("content"),
-                            rs.getObject("is_positive", Boolean.class),
-                            rs.getInt("useful"),
-                            rs.getObject("user_id", Integer.class),
-                            rs.getObject("film_id", Integer.class));
+        sqlBuilder.append("ORDER BY useful DESC\n");
 
-                    reviews.add(review);
-                }
+        if (count != null && count > 0) {
+            sqlBuilder.append("LIMIT :count");
+            params.addValue("count", count);
+        }
 
+        return jdbc.query(sqlBuilder.toString(), params, (rs, rowNum) ->
+                new Review(
+                        rs.getObject("review_id", Integer.class),
+                        rs.getString("content"),
+                        rs.getObject("is_positive", Boolean.class),
+                        rs.getInt("useful"),
+                        rs.getObject("user_id", Integer.class),
+                        rs.getObject("film_id", Integer.class)
+                )
         );
-        return reviews;
     }
 
     @Override

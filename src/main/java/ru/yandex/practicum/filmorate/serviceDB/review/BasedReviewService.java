@@ -102,13 +102,16 @@ public class BasedReviewService implements ReviewServiceDB {
 
     @Override
     public List<Review> getAllReviews(Integer filmId, Integer count) {
-        if (filmId <= 0) {
+
+        if (filmId != null && filmId <= 0) {
             throw new FilmValidationException("Неправильно указан id фильма");
         }
-        if (filmRepository.getFilmById(filmId).isEmpty()) {
+
+        if (filmId != null && filmRepository.getFilmById(filmId).isEmpty()) {
             throw new FilmNotFoundException("Фильм с id=" + filmId + " не найден");
         }
-        if (count <= 0) {
+
+        if (count != null && count <= 0) {
             throw new ReviewValidationException("Неправильно указано количество отзывов");
         }
         return reviewRepository.getAllReviews(filmId, count);
