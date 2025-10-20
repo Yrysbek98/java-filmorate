@@ -1,9 +1,10 @@
 package ru.yandex.practicum.filmorate.repository.review;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.model.Review;
 
@@ -13,30 +14,30 @@ import java.util.*;
 @RequiredArgsConstructor
 public class JdbcReviewRepository implements ReviewRepository {
     private final NamedParameterJdbcOperations jdbc;
-    private final JdbcTemplate jdbcTemplate;
+
 
     @Override
     public Review createReview(Review review) {
-        Integer nextId = jdbcTemplate.queryForObject("SELECT REVIEWS_SEQ.NEXTVAL FROM DUAL", Integer.class);
 
         String sql = """
-                INSERT INTO REVIEWS (review_id, content, is_positive, useful, user_id, film_id)
-                VALUES (:reviewId, :content, :is_positive, :useful, :userId, :filmId)
+                INSERT INTO REVIEWS (content, is_positive, useful, user_id, film_id)
+                VALUES (:content, :is_positive, :useful, :userId, :filmId)
                 """;
 
         MapSqlParameterSource params = new MapSqlParameterSource()
-                .addValue("reviewId", nextId)
                 .addValue("content", review.getContent())
                 .addValue("is_positive", review.getIsPositive())
                 .addValue("useful", 0)
                 .addValue("userId", review.getUserId())
                 .addValue("filmId", review.getFilmId());
 
-        jdbc.update(sql, params);
+        KeyHolder keyHolder = new GeneratedKeyHolder();
+        jdbc.update(sql, params, keyHolder, new String[]{"review_id"});
 
+        int id = keyHolder.getKey().intValue();
 
         return new Review(
-                nextId,
+                id,
                 review.getContent(),
                 review.getIsPositive(),
                 0,
