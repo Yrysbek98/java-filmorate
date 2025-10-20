@@ -8,7 +8,6 @@ import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.model.Review;
 
-import java.sql.ResultSet;
 import java.util.*;
 
 @Repository
