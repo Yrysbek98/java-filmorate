@@ -54,18 +54,19 @@ public class JdbcReviewRepository implements ReviewRepository {
             return Optional.empty();
         }
 
+        int originalUseful = existingReview.get().getUseful();
 
         MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue("content", review.getContent());
         params.addValue("is_positive", review.getIsPositive());
-        params.addValue("useful", review.getUseful());
+        params.addValue("useful", originalUseful); // Сохраняем оригинальное значение
         params.addValue("id", review.getReviewId());
 
         String updateReview = """
-                UPDATE REVIEWS
-                SET CONTENT = :content, IS_POSITIVE = :is_positive, USEFUL = :useful
-                WHERE review_id = :id
-                """;
+            UPDATE REVIEWS
+            SET CONTENT = :content, IS_POSITIVE = :is_positive, USEFUL = :useful
+            WHERE review_id = :id
+            """;
         jdbc.update(updateReview, params);
 
         return getReviewById(review.getReviewId());
