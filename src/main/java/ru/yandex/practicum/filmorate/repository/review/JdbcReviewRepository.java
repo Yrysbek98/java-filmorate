@@ -193,10 +193,10 @@ public class JdbcReviewRepository implements ReviewRepository {
         String calculateSql = """
                 UPDATE REVIEWS
                 SET USEFUL = (
-                    SELECT COALESCE(SUM(CASE WHEN is_like THEN 1 ELSE -1 END), 0) 
-                    FROM REVIEW_LIKES 
+                    SELECT COALESCE(SUM(CASE WHEN is_like THEN 1 ELSE -1 END), 0)
+                    FROM REVIEW_LIKES
                     WHERE review_id = :reviewId
-                ) 
+                )
                 WHERE review_id = :reviewId
                 """;
         MapSqlParameterSource params = new MapSqlParameterSource()
