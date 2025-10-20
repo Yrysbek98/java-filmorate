@@ -112,13 +112,6 @@ public class BasedFilmService implements FilmServiceDB {
 
     @Override
     public void addLike(int id, int userId) {
-        if (id < 1) {
-            throw new FilmValidationException("Некорректный id фильма");
-        }
-        if (userId < 1) {
-            throw new FilmValidationException("Некорректный id пользователя");
-        }
-
         filmRepository.getFilmById(id)
                 .orElseThrow(() -> new FilmNotFoundException("Фильм с id " + id + " не найден"));
 
@@ -137,13 +130,6 @@ public class BasedFilmService implements FilmServiceDB {
 
     @Override
     public void deleteLike(int id, int userId) {
-        if (id < 1) {
-            throw new FilmValidationException("Некорректный id фильма");
-        }
-        if (userId < 1) {
-            throw new FilmValidationException("Некорректный id пользователя");
-        }
-
         filmRepository.getFilmById(id)
                 .orElseThrow(() -> new FilmNotFoundException("Фильм с id " + id + " не найден"));
 
