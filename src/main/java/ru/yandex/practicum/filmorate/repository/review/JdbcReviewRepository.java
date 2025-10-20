@@ -34,6 +34,9 @@ public class JdbcReviewRepository implements ReviewRepository {
             throw new IllegalArgumentException("Пользователь уже оставил отзыв на этот фильм");
         }
 
+        if (review.getUseful() == null || review.getUseful() != 0) {
+            review.setUseful(0);
+        }
 
 
         String sql = """
@@ -44,7 +47,7 @@ public class JdbcReviewRepository implements ReviewRepository {
         MapSqlParameterSource params = new MapSqlParameterSource()
                 .addValue("content", review.getContent())
                 .addValue("is_positive", review.getIsPositive())
-                .addValue("useful", 0)
+                .addValue("useful", review.getUseful())
                 .addValue("userId", review.getUserId())
                 .addValue("filmId", review.getFilmId());
 
