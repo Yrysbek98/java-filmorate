@@ -18,7 +18,7 @@ public interface ReviewRepository {
 
     void addLikeToReview(int reviewId, int userId);
 
-    Optional<Review> addDislikeToReview(int reviewId, int userId);
+    void addDislikeToReview(int reviewId, int userId);
 
     void deleteLikeToReview(int reviewId, int userId);
 

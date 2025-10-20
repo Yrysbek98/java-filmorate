@@ -131,7 +131,7 @@ public class BasedReviewService implements ReviewServiceDB {
     }
 
     @Override
-    public Optional<Review> addDislikeToReview(int reviewId, int userId) {
+    public void addDislikeToReview(int reviewId, int userId) {
         Optional<Review> r = reviewRepository.getReviewById(reviewId);
         if (r.isEmpty()) {
             throw new ReviewNotFoundException("Отзыв не найден");
@@ -140,7 +140,7 @@ public class BasedReviewService implements ReviewServiceDB {
         if (u.isEmpty()) {
             throw new UserNotFoundException("Пользователь не найден");
         }
-        return reviewRepository.addDislikeToReview(reviewId, userId);
+        reviewRepository.addDislikeToReview(reviewId, userId);
     }
 
     @Override
