@@ -287,7 +287,8 @@ public class JdbcFilmRepository implements FilmRepository {
     @Override
     public void addLike(int id, int userId) {
         String addLikeQuery = """
-                INSERT INTO LIKES (film_id, user_id)
+                MERGE INTO LIKES (film_id, user_id)
+                KEY (film_id, user_id)
                 VALUES (:filmId, :userId)
                 """;
 
@@ -341,7 +342,10 @@ public class JdbcFilmRepository implements FilmRepository {
         filmQuery.append("""
                     GROUP BY f.film_id, m.mpa_id, m.name
                     ORDER BY likes_count DESC
+                    LIMIT :count
                 """);
+
+        params.addValue("count", count);
 
         Map<Integer, Film> filmMap = new LinkedHashMap<>();
 

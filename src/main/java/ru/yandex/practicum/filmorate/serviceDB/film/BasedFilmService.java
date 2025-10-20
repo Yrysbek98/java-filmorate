@@ -7,6 +7,7 @@ import ru.yandex.practicum.filmorate.exception.film.FilmNotFoundException;
 import ru.yandex.practicum.filmorate.exception.film.FilmValidationException;
 import ru.yandex.practicum.filmorate.exception.genre.GenreNotFoundException;
 import ru.yandex.practicum.filmorate.exception.mpa.MpaNotFoundException;
+import ru.yandex.practicum.filmorate.exception.user.UserNotFoundException;
 import ru.yandex.practicum.filmorate.model.Event;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
@@ -18,6 +19,7 @@ import ru.yandex.practicum.filmorate.repository.event.EventRepository;
 import ru.yandex.practicum.filmorate.repository.film.FilmRepository;
 import ru.yandex.practicum.filmorate.repository.genre.GenreRepository;
 import ru.yandex.practicum.filmorate.repository.mpa.MpaRepository;
+import ru.yandex.practicum.filmorate.repository.user.UserRepository;
 
 
 import java.util.List;
@@ -32,13 +34,10 @@ public class BasedFilmService implements FilmServiceDB {
     final GenreRepository genreRepository;
     final DirectorRepository directorRepository;
     final EventRepository eventRepository;
+    final UserRepository userRepository;
 
     @Override
     public Optional<Film> getFilmById(int id) {
-        final Optional<Film> f = filmRepository.getFilmById(id);
-        if (f.isEmpty()) {
-            throw new FilmNotFoundException("Фильм с таким " + id + " не найден");
-        }
         return filmRepository.getFilmById(id);
     }
 
@@ -119,10 +118,13 @@ public class BasedFilmService implements FilmServiceDB {
         if (userId < 1) {
             throw new FilmValidationException("Некорректный id пользователя");
         }
-        final Optional<Film> f = filmRepository.getFilmById(id);
-        if (f.isEmpty()) {
-            throw new FilmNotFoundException("Фильм с таким " + id + " не найден");
-        }
+
+        filmRepository.getFilmById(id)
+                .orElseThrow(() -> new FilmNotFoundException("Фильм с id " + id + " не найден"));
+
+        userRepository.getUserById(userId)
+                .orElseThrow(() -> new UserNotFoundException("Пользователь с таким id " + userId + " не найден"));
+
         filmRepository.addLike(id, userId);
         Event event = new Event(
                 System.currentTimeMillis(),
@@ -141,11 +143,15 @@ public class BasedFilmService implements FilmServiceDB {
         if (userId < 1) {
             throw new FilmValidationException("Некорректный id пользователя");
         }
-        final Optional<Film> f = filmRepository.getFilmById(id);
-        if (f.isEmpty()) {
-            throw new FilmNotFoundException("Фильм с таким " + id + " не найден");
-        }
+
+        filmRepository.getFilmById(id)
+                .orElseThrow(() -> new FilmNotFoundException("Фильм с id " + id + " не найден"));
+
+        userRepository.getUserById(userId)
+                .orElseThrow(() -> new UserNotFoundException("Пользователь с таким id " + userId + " не найден"));
+
         filmRepository.deleteLike(id, userId);
+
         Event event = new Event(
                 System.currentTimeMillis(),
                 userId,
