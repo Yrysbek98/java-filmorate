@@ -18,6 +18,22 @@ public class JdbcReviewRepository implements ReviewRepository {
 
     @Override
     public Review createReview(Review review) {
+        String checkSql = """
+                SELECT COUNT(*)
+                FROM REVIEWS
+                WHERE USER_ID = :userId AND FILM_ID = :filmId
+                """;
+
+        Map<String, Object> param = Map.of(
+                "userId", review.getUserId(),
+                "filmId", review.getFilmId()
+        );
+
+        Boolean exists = jdbc.queryForObject(checkSql, param, Boolean.class);
+        if (exists != null && exists) {
+            throw new IllegalArgumentException("Пользователь уже оставил отзыв на этот фильм");
+        }
+
 
         String sql = """
                 INSERT INTO REVIEWS (content, is_positive, useful, user_id, film_id)
@@ -192,14 +208,14 @@ public class JdbcReviewRepository implements ReviewRepository {
 
     private void recalculateUsefulness(int reviewId) {
         String calculateSql = """
-            UPDATE REVIEWS
-            SET USEFUL = (
-                SELECT COUNT(CASE WHEN is_like THEN 1 END) - COUNT(CASE WHEN NOT is_like THEN 1 END)
-                FROM REVIEW_LIKES
+                UPDATE REVIEWS
+                SET USEFUL = (
+                    SELECT COUNT(CASE WHEN is_like THEN 1 END) - COUNT(CASE WHEN NOT is_like THEN 1 END)
+                    FROM REVIEW_LIKES
+                    WHERE review_id = :reviewId
+                )
                 WHERE review_id = :reviewId
-            )
-            WHERE review_id = :reviewId
-            """;
+                """;
         MapSqlParameterSource params = new MapSqlParameterSource()
                 .addValue("reviewId", reviewId);
         jdbc.update(calculateSql, params);
