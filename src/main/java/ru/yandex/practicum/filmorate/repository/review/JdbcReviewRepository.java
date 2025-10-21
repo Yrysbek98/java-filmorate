@@ -122,9 +122,9 @@ public class JdbcReviewRepository implements ReviewRepository {
     public List<Review> getAllReviews(Integer filmId, Integer count) {
 
         StringBuilder sqlBuilder = new StringBuilder("""
-                SELECT review_id, content, is_positive, useful, user_id, film_id
-                FROM REVIEWS
-                """);
+            SELECT review_id, content, is_positive, useful, user_id, film_id
+            FROM REVIEWS
+            """);
 
         MapSqlParameterSource params = new MapSqlParameterSource();
 
@@ -145,7 +145,7 @@ public class JdbcReviewRepository implements ReviewRepository {
                         rs.getObject("review_id", Integer.class),
                         rs.getString("content"),
                         rs.getObject("is_positive", Boolean.class),
-                        rs.getInt("useful"),
+                        0,
                         rs.getObject("user_id", Integer.class),
                         rs.getObject("film_id", Integer.class)
                 )
