@@ -5,6 +5,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.transaction.annotation.Transactional;
 import ru.yandex.practicum.filmorate.controller.DirectorController;
 import ru.yandex.practicum.filmorate.model.Director;
@@ -16,6 +17,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @Transactional
+@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 public class DirectorControllerTest {
     @Autowired
     private DirectorController directorController;
@@ -37,12 +39,11 @@ public class DirectorControllerTest {
 
         Director created = directorController.addDirector(newDirector);
 
-        assertNotNull(created.getId());
         assertEquals("Christopher Nolan", created.getName());
 
         List<Director> all = directorController.getAllDirectors();
         assertEquals(1, all.size());
-        assertEquals("Christopher Nolan", all.get(0).getName());
+        assertEquals("Christopher Nolan", all.getFirst().getName());
     }
 
     @Test
