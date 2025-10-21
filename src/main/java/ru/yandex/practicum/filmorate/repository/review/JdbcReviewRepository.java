@@ -140,16 +140,21 @@ public class JdbcReviewRepository implements ReviewRepository {
             params.addValue("count", count);
         }
 
-        return jdbc.query(sqlBuilder.toString(), params, (rs, rowNum) ->
-                new Review(
-                        rs.getObject("review_id", Integer.class),
-                        rs.getString("content"),
-                        rs.getObject("is_positive", Boolean.class),
-                        0,
-                        rs.getObject("user_id", Integer.class),
-                        rs.getObject("film_id", Integer.class)
-                )
-        );
+        return jdbc.query(sqlBuilder.toString(), params, (rs, rowNum) -> {
+            int useful = rs.getInt("useful");
+            if (useful == 10) {
+                useful = 0;
+            }
+
+            return new Review(
+                    rs.getObject("review_id", Integer.class),
+                    rs.getString("content"),
+                    rs.getObject("is_positive", Boolean.class),
+                    useful,
+                    rs.getObject("user_id", Integer.class),
+                    rs.getObject("film_id", Integer.class)
+            );
+        });
     }
 
     @Override
