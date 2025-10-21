@@ -133,7 +133,7 @@ public class JdbcReviewRepository implements ReviewRepository {
             params.addValue("filmId", filmId);
         }
 
-        sqlBuilder.append("ORDER BY useful DESC\n");
+        sqlBuilder.append("ORDER BY useful ASC\n");
 
         if (count != null && count > 0) {
             sqlBuilder.append("LIMIT :count");
