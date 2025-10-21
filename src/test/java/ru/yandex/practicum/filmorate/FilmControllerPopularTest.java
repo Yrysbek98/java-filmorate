@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.transaction.annotation.Transactional;
 import ru.yandex.practicum.filmorate.controller.FilmController;
 import ru.yandex.practicum.filmorate.model.Mpa;
@@ -23,6 +24,7 @@ import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 @SpringBootTest
 @AutoConfigureTestDatabase
 @Transactional
+@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 public class FilmControllerPopularTest {
     @Autowired
     private FilmController filmController;
@@ -38,16 +40,13 @@ public class FilmControllerPopularTest {
     private Film film2;
     private Film film3;
 
-    private User user1;
-    private User user2;
-
     @BeforeEach
     void setUp() {
         // Создаём пользователей
-        user1 = userRepository.createUser(
+        User user1 = userRepository.createUser(
                 new User(0, "user1@mail.com", "user1", "User One", LocalDate.of(1990, 1, 1))
         );
-        user2 = userRepository.createUser(
+        User user2 = userRepository.createUser(
                 new User(0, "user2@mail.com", "user2", "User Two", LocalDate.of(1992, 2, 2))
         );
 
@@ -75,22 +74,14 @@ public class FilmControllerPopularTest {
     @DisplayName("getPopularFilms без параметров — возвращает фильмы по количеству лайков")
     void shouldReturnPopularFilms() {
         List<Film> popular = filmController.getPopularFilms(10, null, null);
-
-        assertThat(popular).hasSize(3);
-        assertThat(popular.get(0).getName()).isEqualTo("Film One"); // 2 лайка
-        assertThat(popular.get(1).getName()).isEqualTo("Film Two"); // 1 лайк
-        assertThat(popular.get(2).getName()).isEqualTo("Film Three"); // 0 лайков
+        assertThat(popular).containsExactly(film1, film2, film3);
     }
 
     @Test
     @DisplayName("getPopularFilms с параметром year — фильтрует по году выпуска")
     void shouldReturnPopularFilmsByYear() {
         List<Film> popular2020 = filmController.getPopularFilms(10, null, 2020);
-
-        assertThat(popular2020).hasSize(2);
-        assertThat(popular2020)
-                .extracting(Film::getName)
-                .containsExactlyInAnyOrder("Film One", "Film Three");
+        assertThat(popular2020).containsExactly(film1, film3);
     }
 
 }
