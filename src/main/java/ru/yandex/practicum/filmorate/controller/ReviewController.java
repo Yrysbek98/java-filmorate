@@ -37,7 +37,7 @@ public class ReviewController {
 
     @PostMapping
     public Review createReview(@Valid @RequestBody  Review review) {
-
+        review.setUseful(0);
         return reviewServiceDB.createReview(review);
     }
 
