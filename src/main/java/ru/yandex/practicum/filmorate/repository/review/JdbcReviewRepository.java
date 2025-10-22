@@ -6,6 +6,7 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 import ru.yandex.practicum.filmorate.model.Review;
 
 import java.util.*;
@@ -159,6 +160,7 @@ public class JdbcReviewRepository implements ReviewRepository {
     }
 
     @Override
+    @Transactional
     public void addLikeToReview(int reviewId, int userId) {
         String deleteSql = "DELETE FROM REVIEW_LIKES WHERE review_id = :reviewId AND user_id = :userId";
         MapSqlParameterSource deleteParams = new MapSqlParameterSource()
@@ -173,6 +175,7 @@ public class JdbcReviewRepository implements ReviewRepository {
     }
 
     @Override
+    @Transactional
     public void addDislikeToReview(int reviewId, int userId) {
         String deleteSql = "DELETE FROM REVIEW_LIKES WHERE review_id = :reviewId AND user_id = :userId";
         MapSqlParameterSource deleteParams = new MapSqlParameterSource()
@@ -187,6 +190,7 @@ public class JdbcReviewRepository implements ReviewRepository {
     }
 
     @Override
+    @Transactional
     public void deleteLikeToReview(int reviewId, int userId) {
         String deleteSql = "DELETE FROM REVIEW_LIKES WHERE review_id = :reviewId AND user_id = :userId AND is_like = true";
         MapSqlParameterSource params = new MapSqlParameterSource()
@@ -199,6 +203,7 @@ public class JdbcReviewRepository implements ReviewRepository {
     }
 
     @Override
+    @Transactional
     public void deleteDislikeToReview(int reviewId, int userId) {
         String deleteSql = "DELETE FROM REVIEW_LIKES WHERE review_id = :reviewId AND user_id = :userId AND is_like = false";
         MapSqlParameterSource params = new MapSqlParameterSource()
