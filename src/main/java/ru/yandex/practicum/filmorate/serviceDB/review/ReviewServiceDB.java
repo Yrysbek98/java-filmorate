@@ -8,11 +8,11 @@ import java.util.Optional;
 public interface ReviewServiceDB {
     Review createReview(Review review);
 
-    Optional<Review> updateReview(Review review);
+    Review updateReview(Review review);
 
     void deleteReview(int id);
 
-    Optional<Review> getReviewById(int id);
+    Review getReviewById(int id);
 
     List<Review> getAllReviews(Integer filmId, Integer count);
 

@@ -30,7 +30,7 @@ public class ReviewController {
     }
 
     @GetMapping("/{id}")
-    public Optional<Review> getReviewById(
+    public Review getReviewById(
             @PathVariable int id) {
         return reviewServiceDB.getReviewById(id);
     }
@@ -42,7 +42,7 @@ public class ReviewController {
     }
 
     @PutMapping()
-    public Optional<Review> updateReview(@Valid @RequestBody Review review) {
+    public Review updateReview(@Valid @RequestBody Review review) {
         return reviewServiceDB.updateReview(review);
     }
 

@@ -21,8 +21,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @AutoConfigureTestDatabase
@@ -82,10 +81,10 @@ public class ReviewControllerTest {
     @Test
     @DisplayName("getReviewById должен вернуть конкретный отзыв")
     void shouldReturnReviewById() {
-        Optional<Review> result = reviewController.getReviewById(review1.getReviewId());
+        Review result = reviewController.getReviewById(review1.getReviewId());
 
-        assertTrue(result.isPresent());
-        assertEquals("Отлично", result.get().getContent());
+        assertNotNull(result);
+        assertEquals("Отлично", result.getContent());
     }
 
     @Test
@@ -107,11 +106,11 @@ public class ReviewControllerTest {
         review1.setContent("Супер");
         review1.setUseful(10);
 
-        Optional<Review> updated = reviewController.updateReview(review1);
+        Review updated = reviewController.updateReview(review1);
 
-        assertTrue(updated.isPresent());
-        assertEquals("Супер", updated.get().getContent());
-        assertEquals(10, updated.get().getUseful());
+        assertNotNull(updated);
+        assertEquals("Супер", updated.getContent());
+        assertEquals(10, updated.getUseful());
     }
 
     @Test
@@ -129,7 +128,7 @@ public class ReviewControllerTest {
         reviewController.addLikeToReview(review1.getReviewId(), user2.getId());
 
         Optional<Review> updated = reviewRepository.getReviewById(review1.getReviewId());
-        assertTrue(updated.isPresent());
+        assertNotNull(updated);
 
     }
 
@@ -139,7 +138,7 @@ public class ReviewControllerTest {
         reviewController.deleteLikeFromReview(review1.getReviewId(), user1.getId());
 
         Optional<Review> updated = reviewRepository.getReviewById(review1.getReviewId());
-        assertTrue(updated.isPresent());
+        assertNotNull(updated);
 
     }
 }

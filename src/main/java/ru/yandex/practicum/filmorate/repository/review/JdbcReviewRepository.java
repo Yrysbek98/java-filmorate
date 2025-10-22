@@ -63,10 +63,10 @@ public class JdbcReviewRepository implements ReviewRepository {
 
 
     @Override
-    public Optional<Review> updateReview(Review review) {
-        Optional<Review> existingReview = getReviewById(review.getReviewId());
-        if (existingReview.isEmpty()) {
-            return Optional.empty();
+    public Review updateReview(Review review) {
+       Optional<Review> existingReview = getReviewById(review.getReviewId());
+       if (existingReview.isEmpty()) {
+            return null;
         }
 
 
@@ -82,8 +82,8 @@ public class JdbcReviewRepository implements ReviewRepository {
                 WHERE review_id = :id
                 """;
         jdbc.update(updateReview, params);
-
-        return getReviewById(review.getReviewId());
+        Review review1 = getReviewById(review.getReviewId()).get();
+        return review1;
     }
 
     @Override
@@ -115,7 +115,7 @@ public class JdbcReviewRepository implements ReviewRepository {
                         rs.getObject("user_id", Integer.class),
                         rs.getObject("film_id", Integer.class)
                 )));
-        return reviews.isEmpty() ? Optional.empty() : Optional.of(reviews.get(0));
+        return reviews.stream().findFirst();
     }
 
     @Override
@@ -142,7 +142,7 @@ public class JdbcReviewRepository implements ReviewRepository {
 
         return jdbc.query(sqlBuilder.toString(), params, (rs, rowNum) -> {
             int useful = rs.getInt("useful");
-            if (useful == 10) {
+                if (useful == 10) {
                 useful = 0;
             }
 

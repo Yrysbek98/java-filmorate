@@ -59,7 +59,7 @@ public class BasedReviewService implements ReviewServiceDB {
     }
 
     @Override
-    public Optional<Review> updateReview(Review review) {
+    public Review updateReview(Review review) {
         Optional<Review> r = reviewRepository.getReviewById(review.getReviewId());
         if (r.isEmpty()) {
             throw new ReviewNotFoundException("Отзыв с таким id=" + review.getReviewId() + " не  найден");
@@ -94,12 +94,13 @@ public class BasedReviewService implements ReviewServiceDB {
     }
 
     @Override
-    public Optional<Review> getReviewById(int id) {
+    public Review getReviewById(int id) {
         Optional<Review> r = reviewRepository.getReviewById(id);
         if (r.isEmpty()) {
             throw new ReviewNotFoundException("Отзыв не найден");
         }
-        return reviewRepository.getReviewById(id);
+
+        return reviewRepository.getReviewById(id).get();
     }
 
 
