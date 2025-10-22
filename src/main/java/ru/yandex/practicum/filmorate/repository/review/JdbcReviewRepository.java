@@ -19,9 +19,10 @@ public class JdbcReviewRepository implements ReviewRepository {
     @Override
     public Review createReview(Review review) {
         String checkSql = """
-                SELECT COUNT(*)
-                FROM REVIEWS
-                WHERE USER_ID = :userId AND FILM_ID = :filmId
+                SELECT EXISTS(
+                    SELECT 1 FROM REVIEWS
+                    WHERE USER_ID = :userId AND FILM_ID = :filmId
+                )
                 """;
 
         Map<String, Object> param = Map.of(
@@ -30,7 +31,7 @@ public class JdbcReviewRepository implements ReviewRepository {
         );
 
         Boolean exists = jdbc.queryForObject(checkSql, param, Boolean.class);
-        if (exists != null && exists) {
+        if (Boolean.TRUE.equals(exists)) {
             throw new IllegalArgumentException("Пользователь уже оставил отзыв на этот фильм");
         }
 
