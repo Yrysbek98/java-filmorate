@@ -43,8 +43,6 @@ public class BasedReviewService implements ReviewServiceDB {
             throw new FilmNotFoundException("Фильм не может быть null");
         }
 
-        review.setUseful(0);
-
         Review savedReview = reviewRepository.createReview(review);
 
         Event event = new Event(

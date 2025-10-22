@@ -71,21 +71,19 @@ public class JdbcReviewRepository implements ReviewRepository {
             return null;
         }
 
-
         MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue("content", review.getContent());
         params.addValue("is_positive", review.getIsPositive());
-        params.addValue("useful", review.getUseful());
         params.addValue("id", review.getReviewId());
 
         String updateReview = """
                 UPDATE REVIEWS
-                SET CONTENT = :content, IS_POSITIVE = :is_positive, USEFUL = :useful
+                SET CONTENT = :content, IS_POSITIVE = :is_positive
                 WHERE review_id = :id
                 """;
         jdbc.update(updateReview, params);
-        Review review1 = getReviewById(review.getReviewId()).get();
-        return review1;
+
+        return getReviewById(review.getReviewId()).get();
     }
 
     @Override
@@ -143,16 +141,13 @@ public class JdbcReviewRepository implements ReviewRepository {
         }
 
         return jdbc.query(sqlBuilder.toString(), params, (rs, rowNum) -> {
-            int useful = rs.getInt("useful");
-            if (useful == 10) {
-                useful = 0;
-            }
+
 
             return new Review(
                     rs.getObject("review_id", Integer.class),
                     rs.getString("content"),
                     rs.getObject("is_positive", Boolean.class),
-                    useful,
+                    rs.getInt("useful"),
                     rs.getObject("user_id", Integer.class),
                     rs.getObject("film_id", Integer.class)
             );
