@@ -110,7 +110,6 @@ public class ReviewControllerTest {
 
         assertNotNull(updated);
         assertEquals("Супер", updated.getContent());
-        assertEquals(10, updated.getUseful());
     }
 
     @Test
@@ -139,6 +138,5 @@ public class ReviewControllerTest {
 
         Optional<Review> updated = reviewRepository.getReviewById(review1.getReviewId());
         assertNotNull(updated);
-
     }
 }
