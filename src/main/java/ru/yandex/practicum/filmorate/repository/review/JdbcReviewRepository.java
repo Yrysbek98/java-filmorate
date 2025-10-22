@@ -64,8 +64,8 @@ public class JdbcReviewRepository implements ReviewRepository {
 
     @Override
     public Review updateReview(Review review) {
-       Optional<Review> existingReview = getReviewById(review.getReviewId());
-       if (existingReview.isEmpty()) {
+        Optional<Review> existingReview = getReviewById(review.getReviewId());
+        if (existingReview.isEmpty()) {
             return null;
         }
 
@@ -122,9 +122,9 @@ public class JdbcReviewRepository implements ReviewRepository {
     public List<Review> getAllReviews(Integer filmId, Integer count) {
 
         StringBuilder sqlBuilder = new StringBuilder("""
-            SELECT review_id, content, is_positive, useful, user_id, film_id
-            FROM REVIEWS
-            """);
+                SELECT review_id, content, is_positive, useful, user_id, film_id
+                FROM REVIEWS
+                """);
 
         MapSqlParameterSource params = new MapSqlParameterSource();
 
@@ -142,7 +142,7 @@ public class JdbcReviewRepository implements ReviewRepository {
 
         return jdbc.query(sqlBuilder.toString(), params, (rs, rowNum) -> {
             int useful = rs.getInt("useful");
-                if (useful == 10) {
+            if (useful == 10) {
                 useful = 0;
             }
 
