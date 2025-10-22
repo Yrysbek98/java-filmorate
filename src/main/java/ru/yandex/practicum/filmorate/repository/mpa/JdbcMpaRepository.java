@@ -15,13 +15,6 @@ public class JdbcMpaRepository implements MpaRepository {
     private final NamedParameterJdbcOperations jdbc;
 
     @Override
-    public int findMpaIdByName(String mpaName) {
-        String query = "SELECT mpa_id FROM MPA WHERE name = :name";
-        Map<String, Object> params = Map.of("name", mpaName);
-        return jdbc.queryForObject(query, params, Integer.class);
-    }
-
-    @Override
     public Optional<Mpa> getMpaById(int id) {
         String query = """
                 SELECT mpa_id, name

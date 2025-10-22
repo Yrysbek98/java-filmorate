@@ -16,7 +16,6 @@ import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.serviceDB.film.FilmServiceDB;
 
 import java.util.List;
-import java.util.Optional;
 
 @Slf4j
 @RestController
@@ -41,7 +40,7 @@ public class FilmController {
     }
 
     @PutMapping
-    public Optional<Film> changeFilm(@Valid @RequestBody Film film) {
+    public Film changeFilm(@Valid @RequestBody Film film) {
         return filmServiceDB.changeFilm(film);
     }
 

@@ -15,7 +15,7 @@ public interface FilmServiceDB {
 
     Film createFilm(Film film);
 
-    Optional<Film> changeFilm(Film film);
+    Film changeFilm(Film film);
 
     void deleteFilm(int id);
 

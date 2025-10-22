@@ -92,13 +92,13 @@ public class BasedFilmService implements FilmServiceDB {
     }
 
     @Override
-    public Optional<Film> changeFilm(Film film) {
+    public Film changeFilm(Film film) {
         final Optional<Film> f = filmRepository.getFilmById(film.getId());
         if (f.isEmpty()) {
             throw new FilmNotFoundException("Фильм с таким " + film.getId() + " не найден");
         }
 
-        return filmRepository.changeFilm(film);
+        return filmRepository.changeFilm(film).get();
     }
 
     // Удаление фильма по ID

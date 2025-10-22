@@ -17,18 +17,12 @@ public class BasedMpaService implements MpaServiceDB {
     final MpaRepository mpaRepository;
 
     @Override
-    public Optional<Integer> findMpaIdByName(String mpaName) {
-        final int id = mpaRepository.findMpaIdByName(mpaName);
-        return Optional.of(id);
-    }
-
-    @Override
-    public Optional<Mpa> getMpaById(int id) {
+    public Mpa getMpaById(int id) {
         Optional<Mpa> mpa = mpaRepository.getMpaById(id);
         if (mpa.isEmpty()) {
             throw new MpaNotFoundException("Рейтинг с таким id= " + id + " не найден");
         }
-        return mpaRepository.getMpaById(id);
+        return mpaRepository.getMpaById(id).get();
     }
 
     @Override
